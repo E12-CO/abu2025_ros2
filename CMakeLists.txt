@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.8)
+project(abu2025_ros2)
+
+
+# find dependencies
+# Default ROS2 dependencies
+find_package(ament_cmake REQUIRED)
+find_package(robot_state_publisher REQUIRED)
+find_package(xacro REQUIRED)
+
+# Robot specific dependencies
+# iRob packages
+find_package(irob_msgs REQUIRED)
+find_package(irob_interface REQUIRED)
+find_package(irob_controller REQUIRED)
+find_package(irob_maneuv3r REQUIRED)
+
+# Sensors packages
+find_package(imu_complementary_filter REQUIRED)
+find_package(ust_05ln_ros2 REQUIRED)
+find_package(ydlidar_ros2_driver REQUIRED)
+find_package(rf2o_laser_odometry REQUIRED)
+find_package(robot_localization REQUIRED)
+
+# SLAM packages
+find_package(cartographer_ros REQUIRED)
+find_package(slam_toolbox REQUIRED)
+
+
+install(
+ DIRECTORY launch R1 R2 params_global meshes maps 
+ DESTINATION share/${PROJECT_NAME}
+)
+
+ament_package()
