@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   
   <joint name="hokuyo_joint_r1" type="fixed">
-    <origin xyz="-0.265 0.0 0" rpy="3.141593 0.0 -3.141593" />
+    <origin xyz="-0.175 0.205 0" rpy="3.141593 0.0 2.356194" />
     <parent link="chassis_r1" />
     <child link="laser_frame_r1" />
   </joint>

@@ -13,14 +13,14 @@
 	<joint name="chassis_joint_r1" type="fixed">
 		<parent link="base_link_r1"/>
 		<child link="chassis_r1"/>
-		<origin xyz="0 0 0"/>
+		<origin xyz="0.13 0 0"/>
 	</joint>
 	
 	<link name="chassis_r1">
 		<visual>
 			<origin xyz="0 0 0.05"/>
 			<geometry>
-				<box size="0.54 0.54 0.12"/>
+				<box size="0.52 0.55 0.10"/>
 			</geometry>
 			<material name="white"/>
 		</visual>
