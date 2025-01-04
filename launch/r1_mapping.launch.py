@@ -29,7 +29,7 @@ def generate_launch_description():
     # Configuration file folder path
     configuration_directory = LaunchConfiguration('configuration_directory',default= os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1') )
     # Configuration file
-    configuration_basename = LaunchConfiguration('configuration_basename', default='R1_hokuyo_2d.lua')
+    configuration_basename = LaunchConfiguration('configuration_basename', default='R1_hokuyo_mapping.lua')
 
     # Configure the node
     node_robot_state_publisher = launch_ros.actions.Node(

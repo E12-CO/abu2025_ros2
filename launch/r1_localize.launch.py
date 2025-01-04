@@ -14,7 +14,7 @@ def generate_launch_description():
 
      # Specify the name of the package and path to xacro file within the package
     pkg_name = 'abu2025_ros2'
-    file_subpath = 'description/robot.urdf.xacro'
+    file_subpath = 'R1/description_r1/robot.urdf.xacro'
     
     # Use xacro to process the file
     xacro_file = os.path.join(get_package_share_directory(pkg_name),file_subpath)
@@ -25,11 +25,11 @@ def generate_launch_description():
     # Map resolution
     resolution = LaunchConfiguration('resolution', default='0.05')
     # Map publish period  
-    publish_period_sec = LaunchConfiguration('publish_period_sec', default='0.5')
+    publish_period_sec = LaunchConfiguration('publish_period_sec', default='1.0')
     # Configuration file folder path
-    configuration_directory = LaunchConfiguration('configuration_directory',default= os.path.join(get_package_share_directory(pkg_name), 'params') )
+    configuration_directory = LaunchConfiguration('configuration_directory',default= os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1') )
     # Configuration file
-    configuration_basename = LaunchConfiguration('configuration_basename', default='hokuyo_2d.lua')
+    configuration_basename = LaunchConfiguration('configuration_basename', default='R1_hokuyo_localize.lua')
 
     # Configure the node
     node_robot_state_publisher = launch_ros.actions.Node(
@@ -44,34 +44,37 @@ def generate_launch_description():
         package='irob_interface',
         executable='iRob_interface',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'irob_interface_mpu90.yaml')]
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_iRob_interface_esp32.yaml')]
     )
-
+    
     # iRob controller
     irob_controller_instant = launch_ros.actions.Node(
         package='irob_controller',
         executable='irob_controller',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'irob_controller_R1.yaml')]
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_iRob_controller.yaml')]
     )
-    
+
     # IMU Complementary filter
     imu_filter_instant = launch_ros.actions.Node(
         package='imu_complementary_filter',
         executable='complementary_filter_node',
         name='complementary_filter_gain_node',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'filter_config.yaml')]
+        remappings=[
+            ('/imu/data_raw', '/imu/data_raw_r1'),
+            ('/imu/mag', '/imu/mag_r1'),
+            ('/imu/data', '/imu/data_r1')
+            ],
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_complementary_config.yaml')]
     )
 
-    # YDLidar X4-Pro laser scanner
-    ydlidar_instant = launch_ros.actions.Node(
-        package='ydlidar_ros2_driver',
-        executable='ydlidar_ros2_driver_node',
+    # Hokuyo UST-05LN laser scanner
+    hokuyo_instant = launch_ros.actions.Node(
+        package='ust_05ln_ros2',
+        executable='urg_node',
         output='screen',
-        emulate_tty=True,
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'X4-Pro.yaml')],
-        namespace='/',
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust.yaml')]
     )
     
     # RF2O laser odometry
@@ -81,11 +84,11 @@ def generate_launch_description():
         name='rf2o_laser_odometry',
         output='screen',
         parameters=[{
-            'laser_scan_topic' : '/scan',
-            'odom_topic' : '/odom_rf2o',
+            'laser_scan_topic' : '/scan_hokuyo_r1',
+            'odom_topic' : '/odom_rf2o_r1',
             'publish_tf' : False,
-            'base_frame_id' : 'base_link',
-            'odom_frame_id' : 'odom',
+            'base_frame_id' : 'base_link_r1',
+            'odom_frame_id' : 'odom_r1',
             'init_pose_from_topic' : '',
             'freq' : 10.0
         }]
@@ -97,22 +100,37 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'ekf.yaml')],
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ekf.yaml')],
     )
 
-    # Delayed sensor 
+     # Delayed sensor 
     delayed_sensor_instant = launch.actions.TimerAction(
         period=2.0, 
-        actions=[imu_filter_instant, ydlidar_instant, rf2o_instant ,ekf_fusion_instant])
+        actions=[
+            imu_filter_instant,
+#            rf2o_instant,
+            ]
+    )
+
+    delayed_fusion_instant = launch.actions.TimerAction(
+        period=3.0,
+        actions=[ekf_fusion_instant]
+    )
 
     cartographer_node = launch_ros.actions.Node(
         package='cartographer_ros',
         executable='cartographer_node',
         name='cartographer_node',
         output='screen',
+        remappings=[
+            ('/imu', '/imu/data_r1'),
+            ('/scan', '/scan_hokuyo_r1') 
+            ],
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', configuration_directory,
-                   '-configuration_basename', configuration_basename]
+                   '-configuration_basename', configuration_basename,
+                   '-load_state_filename', os.path.join(get_package_share_directory(pkg_name), 'maps', 'map.pbstream'),
+                   '-load_frozen_state true']
     )
 
     cartographer_occupancy_grid_node = launch_ros.actions.Node(
@@ -123,16 +141,17 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-resolution', resolution, '-publish_period_sec', publish_period_sec]
     )
-    
+
     # Cartographer SLAM
-    delayed_slam_instant = launch.actions.TimerAction(
-        period=5.0, 
-        actions=[cartographer_node, cartographer_occupancy_grid_node])
+    delayed_slam_instant = launch.actions.TimerAction(period=3.0, actions=[cartographer_node, cartographer_occupancy_grid_node])
+
 
     return launch.LaunchDescription([
         node_robot_state_publisher,
         irob_interface_instant,
         irob_controller_instant,
+        hokuyo_instant,
         delayed_sensor_instant,
-        #delayed_slam_instant
+#        delayed_fusion_instant,
+        delayed_slam_instant
     ])

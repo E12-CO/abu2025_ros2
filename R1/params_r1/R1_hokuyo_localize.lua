@@ -47,12 +47,18 @@ TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 0.01
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 2
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.ceres_solver_options.max_num_iterations = 1000
 
-TRAJECTORY_BUILDER_2D.motion_filter.max_time_seconds = 5.0
+TRAJECTORY_BUILDER_2D.motion_filter.max_time_seconds = 1.0
 TRAJECTORY_BUILDER_2D.motion_filter.max_angle_radians = math.rad(1.0)  -- Modify to 10 degree
 TRAJECTORY_BUILDER_2D.motion_filter.max_distance_meters = 0.15
 
-POSE_GRAPH.optimize_every_n_nodes = 60 -- Original 20
+-- For localization mode
+TRAJECTORY_BUILDER.pure_localization_trimmer = {max_submaps_to_keep = 3,}
+
+POSE_GRAPH.optimize_every_n_nodes = 1 -- Original 60
 POSE_GRAPH.constraint_builder.min_score = 0.80  -- Modify 0.55 to 0.65, the minium score of Fast csm, can be optimized above this score 
 POSE_GRAPH.constraint_builder.global_localization_min_score = 0.80  -- Modify 0.6 as 0.7, Minimum global positioning score below which global positioning is considered currently inaccurate
 
+-- For localization mode
+POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher.angular_search_window = math.rad(180)
+POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher.linear_search_window = 1.0
 return options
