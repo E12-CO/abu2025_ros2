@@ -4,7 +4,6 @@
 	<material name="white">
 		<color rgba="1 1 1 1"/>
 	</material>
-
 	
 	<link name="base_link_r1">
 		
@@ -13,7 +12,7 @@
 	<joint name="chassis_joint_r1" type="fixed">
 		<parent link="base_link_r1"/>
 		<child link="chassis_r1"/>
-		<origin xyz="0.13 0 0"/>
+		<origin xyz="-0.1325 0 0"/>
 	</joint>
 	
 	<link name="chassis_r1">

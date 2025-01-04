@@ -3,6 +3,7 @@ iRob_Interface:
         serial_port:            "/dev/iRob"
         robot_frame_id:         "base_link_r1"
         mouse_odom_frame_id:    "mouse_odom_r1"
+        imu_frame_id:           "imu_link_r1"
         mag_sensor_topic:       "imu/mag_r1"
         imu_sensor_topic:       "imu/data_raw_r1"
         mouse_x_constant:       0.03
