@@ -74,7 +74,7 @@ def generate_launch_description():
         package='ust_05ln_ros2',
         executable='urg_node',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust.yaml')]
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust08.yaml')]
     )
     
     # RF2O laser odometry
@@ -84,7 +84,7 @@ def generate_launch_description():
         name='rf2o_laser_odometry',
         output='screen',
         parameters=[{
-            'laser_scan_topic' : '/scan_hokuyo_r1',
+            'laser_scan_topic' : '/scan_hokuyo1_r1',
             'odom_topic' : '/odom_rf2o_r1',
             'publish_tf' : False,
             'base_frame_id' : 'base_link_r1',
@@ -124,7 +124,7 @@ def generate_launch_description():
         output='screen',
         remappings=[
             ('/imu', '/imu/data_r1'),
-            ('/scan', '/scan_hokuyo_r1') 
+            ('/scan', '/scan_hokuyo1_r1') 
             ],
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', configuration_directory,

@@ -29,7 +29,7 @@ def generate_launch_description():
     # Configuration file folder path
     configuration_directory = LaunchConfiguration('configuration_directory',default= os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1') )
     # Configuration file
-    configuration_basename = LaunchConfiguration('configuration_basename', default='R1_hokuyo_mapping.lua')
+    configuration_basename = LaunchConfiguration('configuration_basename', default='R1_hokuyo_mapping_2sensors.lua')
 
     # Configure the node
     node_robot_state_publisher = launch_ros.actions.Node(
@@ -70,11 +70,18 @@ def generate_launch_description():
     )
 
     # Hokuyo UST-05LN laser scanner
-    hokuyo_instant = launch_ros.actions.Node(
+    hokuyo_back_instant = launch_ros.actions.Node(
         package='ust_05ln_ros2',
         executable='urg_node',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust08.yaml')]
+    )
+
+    hokuyo_front_instant = launch_ros.actions.Node(
+        package='ust_05ln_ros2',
+        executable='urg_node',
+        output='screen',
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust05.yaml')]
     )
     
     # RF2O laser odometry
@@ -124,7 +131,8 @@ def generate_launch_description():
         output='screen',
         remappings=[
             ('/imu', '/imu/data_r1'),
-            ('/scan', '/scan_hokuyo1_r1') 
+            ('/scan_1', '/scan_hokuyo1_r1'),
+            ('/scan_2', '/scan_hokuyo2_r1')
             ],
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', configuration_directory,
@@ -148,7 +156,8 @@ def generate_launch_description():
         node_robot_state_publisher,
         irob_interface_instant,
         irob_controller_instant,
-        hokuyo_instant,
+        hokuyo_front_instant,
+        hokuyo_back_instant,
         delayed_sensor_instant,
 #        delayed_fusion_instant,
         delayed_slam_instant
