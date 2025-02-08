@@ -129,7 +129,7 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', configuration_directory,
                    '-configuration_basename', configuration_basename,
-                   '-load_state_filename', os.path.join(get_package_share_directory(pkg_name), 'maps', 'map.pbstream'),
+                   '-load_state_filename', os.path.join(get_package_share_directory(pkg_name), 'maps', 'abu2025_map.pbstream'),
                    '-load_frozen_state true']
     )
 
