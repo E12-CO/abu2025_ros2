@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <joint name="base_camera_joint_r2" type="fixed">
+  <joint name="base_camera_joint" type="fixed">
     <origin xyz="0.112 0 0.1605"
             rpy="1.5708 3.1415 1.5708" />
-    <parent link="chassis_r2" />
-    <child link="camera_link_r2" />
+    <parent link="chassis" />
+    <child link="camera_link" />
   </joint>
 
-  <link name="camera_link_r2">
+  <link name="camera_link">
     <inertial>
       <mass value="0.01" />
       <origin xyz="0 0 0" />
@@ -32,13 +32,13 @@
 
   </link>
 
-  <joint name="camera_depth_optical_joint_r2" type="fixed">
+  <joint name="camera_depth_optical_joint" type="fixed">
     <origin xyz="-0.04 0 0" rpy="3.1415 3.1415 3.1415" />
-    <parent link="camera_link_r2" />
-    <child link="openni_depth_optical_frame_r2" />
+    <parent link="camera_link" />
+    <child link="openni_depth_optical_frame" />
   </joint>
 
-  <link name="openni_depth_optical_frame_r2">
+  <link name="openni_depth_optical_frame">
     <inertial>
       <mass value="0.001" />
       <origin xyz="0 0 0" />
@@ -48,13 +48,13 @@
     </inertial>
   </link>
 
- <joint name="laser_joint_r2" type="fixed">
+ <joint name="laser_joint" type="fixed">
     <origin xyz="-0.31 -0.15 0" rpy="0.0 0.0 -3.1415" />
-    <parent link="chassis_r2" />
-    <child link="laser_frame_r2" />
+    <parent link="chassis" />
+    <child link="laser_frame" />
   </joint>
 
-  <link name="laser_frame_r2">
+  <link name="laser_frame">
     <inertial>
       <mass value="0.001" />
       <origin xyz="0 -0.2 0" />

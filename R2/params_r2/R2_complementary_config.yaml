@@ -6,7 +6,7 @@ complementary_filter_gain_node:
     do_bias_estimation: true
     do_adaptive_gain: true
     use_mag: false
-    fixed_frame: "odom"
+    fixed_frame: "odom_r2"
     publish_tf: false    # Let the EFK publish transfor instead
     reverse_tf: false
     constant_dt: 0.0

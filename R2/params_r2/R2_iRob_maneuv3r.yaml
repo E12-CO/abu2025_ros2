@@ -1,8 +1,8 @@
 iRob_maneuv3r:
     ros__parameters:
         map_frame_id: "map"
-        odom_frame_id: "odom"
-        robot_frame_id: "base_link"
+        odom_frame_id: "odom_r2"
+        robot_frame_id: "base_link_r2"
         use_odom_tf_only: false
         
         walk_kp: 0.9

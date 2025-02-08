@@ -14,7 +14,7 @@ def generate_launch_description():
 
      # Specify the name of the package and path to xacro file within the package
     pkg_name = 'abu2025_ros2'
-    file_subpath = 'description_r1/robot.urdf.xacro'
+    file_subpath = 'R2/description_r2/robot.urdf.xacro'
     
     # Use xacro to process the file
     xacro_file = os.path.join(get_package_share_directory(pkg_name),file_subpath)
@@ -27,9 +27,9 @@ def generate_launch_description():
     # Map publish period  
     publish_period_sec = LaunchConfiguration('publish_period_sec', default='1.0')
     # Configuration file folder path
-    configuration_directory = LaunchConfiguration('configuration_directory',default= os.path.join(get_package_share_directory(pkg_name), 'params') )
+    configuration_directory = LaunchConfiguration('configuration_directory',default= os.path.join(get_package_share_directory(pkg_name), 'R2/params_r2') )
     # Configuration file
-    configuration_basename = LaunchConfiguration('configuration_basename', default='hokuyo_2d.lua')
+    configuration_basename = LaunchConfiguration('configuration_basename', default='R2_hokuyo_mapping.lua')
 
     # Configure the node
     node_robot_state_publisher = launch_ros.actions.Node(
@@ -44,7 +44,7 @@ def generate_launch_description():
         package='irob_interface',
         executable='iRob_interface',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'irob_interface_mpu90.yaml')]
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R2/params_r2', 'R2_iRob_interface_esp32.yaml')]
     )
     
     # iRob controller
@@ -52,7 +52,7 @@ def generate_launch_description():
         package='irob_controller',
         executable='irob_controller',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'irob_controller_R1.yaml')]
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R2/params_r2', 'R2_iRob_controller.yaml')]
     )
 
     # IMU Complementary filter
@@ -61,7 +61,12 @@ def generate_launch_description():
         executable='complementary_filter_node',
         name='complementary_filter_gain_node',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'filter_config.yaml')]
+        remappings=[
+            ('/imu/data_raw', '/imu/data_raw_r2'),
+            ('/imu/mag', '/imu/mag_r2'),
+            ('/imu/data', '/imu/data_r2')
+            ],
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R2/params_r2', 'R2_complementary_config.yaml')]
     )
 
     # Hokuyo UST-05LN laser scanner
@@ -69,14 +74,7 @@ def generate_launch_description():
         package='ust_05ln_ros2',
         executable='urg_node',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'ust.yaml')]
-    )
-    
-    # Hokuyo angle filter
-    hokuyo_filter_instant = launch_ros.actions.Node(
-        package='laser_filters',
-        executable='scan_to_scan_filter_chain',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'hokuyo_angle_filter.yaml')]
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R2/params_r2', 'R2_ust08.yaml')]
     )
     
     # RF2O laser odometry
@@ -86,11 +84,11 @@ def generate_launch_description():
         name='rf2o_laser_odometry',
         output='screen',
         parameters=[{
-            'laser_scan_topic' : '/scan',
-            'odom_topic' : '/odom_rf2o',
+            'laser_scan_topic' : '/scan_hokuyo1_r2',
+            'odom_topic' : '/odom_rf2o_r2',
             'publish_tf' : False,
-            'base_frame_id' : 'base_link',
-            'odom_frame_id' : 'odom',
+            'base_frame_id' : 'base_link_r2',
+            'odom_frame_id' : 'odom_r2',
             'init_pose_from_topic' : '',
             'freq' : 10.0
         }]
@@ -102,14 +100,13 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'params', 'ekf.yaml')],
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R2/params_r2', 'R2_ekf.yaml')],
     )
 
      # Delayed sensor 
     delayed_sensor_instant = launch.actions.TimerAction(
         period=2.0, 
         actions=[
-#            hokuyo_filter_instant,
             imu_filter_instant,
 #            rf2o_instant,
             ]
@@ -126,7 +123,8 @@ def generate_launch_description():
         name='cartographer_node',
         output='screen',
         remappings=[
-            ('/imu', '/imu/data') 
+            ('/imu', '/imu/data_r2'),
+            ('/scan', '/scan_hokuyo1_r2') 
             ],
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', configuration_directory,
