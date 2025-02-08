@@ -38,8 +38,8 @@ class socket_pose(Node):
 		self.r2Pose = TransformStamped()
 
 		# Initial pose on the map
-		self.r1PoseStr = '0.45, -0.45, 0.0'
-		self.r2PoseStr = '0.45, -1.45, 0.0'
+		self.r1PoseStr = '0.40, -0.40, 0.0'
+		self.r2PoseStr = '0.40, -1.40, 0.0'
 
 		self.timer = self.create_timer(0.05, self.timer_callback)
 		self.get_logger().info("Robot Club Engineering KMITL : starting robot Pose socket node...")
