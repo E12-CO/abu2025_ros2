@@ -31,10 +31,10 @@ class PathInterpolator(Node):
         )
         self.linearPath_msg = Path()
         self.linearPath_msg.header.frame_id = 'map'
-        self.ccma = CCMA(w_ma=220, w_cc=3)
+        self.ccma = CCMA(w_ma=300, w_cc=3)
 
         self.pathCSVName = filename
-        with open(self.pathCSVName, mode='w', newline='') as file:
+        with open(self.pathCSVName, mode='w', newline='\n') as file:
             writer = csv.writer(file)
             writer.writerow(['X', 'Y', 'Yaw'])
 
@@ -70,6 +70,15 @@ class PathInterpolator(Node):
             )
             )
 
+        with open(self.pathCSVName, mode='a', newline='\n') as file:
+            writer = csv.writer(file)
+            writer.writerow(
+                [current_point[0],
+                 current_point[1], 
+                 current_point[2]]
+            )
+ 
+
         # If we have a last point, interpolate between them
         if self.last_point is not None:
             interpolated_points = self.interpolate_points(self.last_point, current_point, num_points=50)
@@ -87,6 +96,8 @@ class PathInterpolator(Node):
                 pose.pose.orientation.z = q[3]
                 pose.pose.orientation.w = q[0]
                 self.linearPath_msg.poses.append(pose)
+
+            print("Interpolated path length:", len(self.linearPath_msg.poses))
 
             # Publish the linear interpolated path
             self.linearPath_msg.header.stamp = self.get_clock().now().to_msg()
@@ -118,9 +129,18 @@ class PathInterpolator(Node):
                 y_list.append(xy_point.pose.position.y)
 
             smooth_path = self.ccma.filter(np.column_stack([x_list,y_list]), cc_mode=False)
-            print("Smooth path length:", len(smooth_path))
+            
             smoothPath_msg = Path()
             smoothPath_msg.header.frame_id = 'map'
+            
+            # Insert initial point
+            smoothPose = PoseStamped()
+            smoothPose.header.frame_id = 'map'
+            smoothPose.header.stamp = self.get_clock().now().to_msg()
+            smoothPose.pose.position.x = self.linearPath_msg.poses[0].pose.position.x
+            smoothPose.pose.position.y = self.linearPath_msg.poses[0].pose.position.y
+            smoothPath_msg.poses.append(smoothPose)
+
             for smooth_pose in smooth_path:
                 smoothPose = PoseStamped()
                 smoothPose.header.frame_id = 'map'
@@ -129,9 +149,21 @@ class PathInterpolator(Node):
                 smoothPose.pose.position.y = smooth_pose[1]
                 smoothPath_msg.poses.append(smoothPose)
 
+            # Insert last point
+            smoothPose.header.stamp = self.get_clock().now().to_msg()
+            smoothPose.pose.position.x = self.linearPath_msg.poses[-1].pose.position.x
+            smoothPose.pose.position.y = self.linearPath_msg.poses[-1].pose.position.y
+            smoothPath_msg.poses.append(smoothPose)
+
             # Copy YAW
+            smoothPath_msg.poses[0].pose.orientation = self.linearPath_msg.poses[0].pose.orientation
+
             for yaw_pose_idx in range(0, len(self.linearPath_msg.poses)):
-                smoothPath_msg.poses[yaw_pose_idx].pose.orientation = self.linearPath_msg.poses[yaw_pose_idx].pose.orientation
+                smoothPath_msg.poses[yaw_pose_idx+1].pose.orientation = self.linearPath_msg.poses[yaw_pose_idx].pose.orientation
+
+            smoothPath_msg.poses[-1].pose.orientation = self.linearPath_msg.poses[-1].pose.orientation
+
+            print("Smooth path length:", len(smoothPath_msg.poses))
 
             # Update the Path header timestamp
             smoothPath_msg.header.stamp = self.get_clock().now().to_msg()
