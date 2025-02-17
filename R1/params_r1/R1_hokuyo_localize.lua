@@ -5,7 +5,7 @@ options = {
   map_builder = MAP_BUILDER,  
   trajectory_builder = TRAJECTORY_BUILDER,  
   map_frame = "map",  -- map frame name 
-  tracking_frame = "chassis_r1",  -- tracking frame name
+  tracking_frame = "base_link_r1",  -- tracking frame name
   published_frame = "base_link_r1",  -- published frame name 
   odom_frame = "odom_r1",  -- name of the odometer frame
   provide_odom_frame = false,  -- whether to provide the odometer frame
@@ -14,7 +14,7 @@ options = {
   use_odometry = false,  -- whether use odometry
   use_nav_sat = false,  -- whether use the navigation satellite 
   use_landmarks = false,  -- whether use the landmark
-  num_laser_scans = 1,  -- LiDAR number  
+  num_laser_scans = 2,  -- LiDAR number  
   num_multi_echo_laser_scans = 0,  -- number of multi-echo LiDAR  
   num_subdivisions_per_laser_scan = 1,  -- number of subdivisions for each laser scan
   num_point_clouds = 0,  -- number of cloud points
@@ -31,7 +31,7 @@ options = {
 }
  
 MAP_BUILDER.use_trajectory_builder_2d = true  -- whether use 2D SLAM
-TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 2 -- Acumulate two hokuyo scan data 
+TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 2 -- Accumulate two hokuyo scan data 
 TRAJECTORY_BUILDER_2D.submaps.num_range_data = 20  -- Max is 100
 TRAJECTORY_BUILDER_2D.min_range = 0.1  -- ignore anything smaller than the robot radius, limiting it to the minimum scan range of the lidar
 TRAJECTORY_BUILDER_2D.max_range = 7.8  -- the maximum scanning range of the lidar
@@ -59,6 +59,6 @@ POSE_GRAPH.constraint_builder.min_score = 0.80  -- Modify 0.55 to 0.65, the mini
 POSE_GRAPH.constraint_builder.global_localization_min_score = 0.80  -- Modify 0.6 as 0.7, Minimum global positioning score below which global positioning is considered currently inaccurate
 
 -- For localization mode
-POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher.angular_search_window = math.rad(180)
-POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher.linear_search_window = 1.0
+POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher.angular_search_window = math.rad(90)
+POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher.linear_search_window = 0.5
 return options
