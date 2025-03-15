@@ -43,7 +43,7 @@ class socket_pose(Node):
 
 		self.timer = self.create_timer(0.05, self.timer_callback)
 		self.get_logger().info("Robot Club Engineering KMITL : starting robot Pose socket node...")
-	
+
 	def quat_to_yaw(self, x, y, z, w):
 		(row, pitch, yaw) = transforms3d.euler.quat2euler([w, x, y, z], 'sxyz')
 		if yaw < 0.0:
