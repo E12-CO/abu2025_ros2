@@ -34,9 +34,9 @@ class PathInterpolator(Node):
         self.ccma = CCMA(w_ma=300, w_cc=3)
 
         self.pathCSVName = filename
-        with open(self.pathCSVName, mode='w', newline='\n') as file:
-            writer = csv.writer(file)
-            writer.writerow(['X', 'Y', 'Yaw'])
+#        with open(self.pathCSVName, mode='w', newline='\n') as file:
+#            writer = csv.writer(file)
+#            writer.writerow(['X', 'Y', 'Yaw'])
 
         self.last_point = None
         self.timer = self.create_timer(0.05, self.timer_callback)
