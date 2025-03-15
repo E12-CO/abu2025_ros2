@@ -55,68 +55,21 @@ def generate_launch_description():
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_iRob_controller.yaml')]
     )
 
-    # IMU Complementary filter
-    imu_filter_instant = launch_ros.actions.Node(
-        package='imu_complementary_filter',
-        executable='complementary_filter_node',
-        name='complementary_filter_gain_node',
-        output='screen',
-        remappings=[
-            ('/imu/data_raw', '/imu/data_raw_r1'),
-            ('/imu/mag', '/imu/mag_r1'),
-            ('/imu/data', '/imu/data_r1')
-            ],
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_complementary_config.yaml')]
-    )
-
-    # Hokuyo UST-05LN laser scanner
-    hokuyo_instant = launch_ros.actions.Node(
+    # Hokuyo UST laser scanners
+    hokuyo_back_instant = launch_ros.actions.Node(
         package='ust_05ln_ros2',
         executable='urg_node',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust08.yaml')]
     )
+
+    hokuyo_front_instant = launch_ros.actions.Node(
+        package='ust_05ln_ros2',
+        executable='urg_node',
+        output='screen',
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust05.yaml')]
+    )
     
-    # RF2O laser odometry
-    rf2o_instant = launch_ros.actions.Node(
-        package='rf2o_laser_odometry',
-        executable='rf2o_laser_odometry_node',
-        name='rf2o_laser_odometry',
-        output='screen',
-        parameters=[{
-            'laser_scan_topic' : '/scan_hokuyo1_r1',
-            'odom_topic' : '/odom_rf2o_r1',
-            'publish_tf' : False,
-            'base_frame_id' : 'base_link_r1',
-            'odom_frame_id' : 'odom_r1',
-            'init_pose_from_topic' : '',
-            'freq' : 10.0
-        }]
-    )
-
-    # Extended Kalman Filter 
-    ekf_fusion_instant = launch_ros.actions.Node(
-        package='robot_localization',
-        executable='ekf_node',
-        name='ekf_filter_node',
-        output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ekf.yaml')],
-    )
-
-     # Delayed sensor 
-    delayed_sensor_instant = launch.actions.TimerAction(
-        period=2.0, 
-        actions=[
-            imu_filter_instant,
-#            rf2o_instant,
-            ]
-    )
-
-    delayed_fusion_instant = launch.actions.TimerAction(
-        period=3.0,
-        actions=[ekf_fusion_instant]
-    )
-
     cartographer_node = launch_ros.actions.Node(
         package='cartographer_ros',
         executable='cartographer_node',
@@ -124,7 +77,8 @@ def generate_launch_description():
         output='screen',
         remappings=[
             ('/imu', '/imu/data_r1'),
-            ('/scan', '/scan_hokuyo1_r1') 
+            ('/scan_1', '/scan_hokuyo1_r1'),
+            ('/scan_2', '/scan_hokuyo2_r1') 
             ],
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', configuration_directory,
@@ -150,8 +104,7 @@ def generate_launch_description():
         node_robot_state_publisher,
         irob_interface_instant,
         irob_controller_instant,
-        hokuyo_instant,
-        delayed_sensor_instant,
-#        delayed_fusion_instant,
+        hokuyo_front_instant,
+        hokuyo_back_instant,
         delayed_slam_instant
     ])
