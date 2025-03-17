@@ -14,7 +14,7 @@ def generate_launch_description():
 
      # Specify the name of the package and path to xacro file within the package
     pkg_name = 'abu2025_ros2'
-    file_subpath = 'R1/description_r1/robot.urdf.xacro'
+    file_subpath = 'R2/description_r1/robot.urdf.xacro'
     
     # Use xacro to process the file
     xacro_file = os.path.join(get_package_share_directory(pkg_name),file_subpath)
@@ -27,15 +27,15 @@ def generate_launch_description():
     # Map publish period  
     publish_period_sec = LaunchConfiguration('publish_period_sec', default='1.0')
     # Configuration file folder path
-    configuration_directory = LaunchConfiguration('configuration_directory',default= os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1') )
+    configuration_directory = LaunchConfiguration('configuration_directory',default= os.path.join(get_package_share_directory(pkg_name), 'R2/params_r2') )
     # Configuration file
-    configuration_basename = LaunchConfiguration('configuration_basename', default='R1_hokuyo_localize.lua')
+    configuration_basename = LaunchConfiguration('configuration_basename', default='R2_hokuyo_localize.lua')
 
     # Configure the node
     node_robot_state_publisher = launch_ros.actions.Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        namespace='r1',
+        namespace='r2',
         output='screen',
         parameters=[{'robot_description': robot_description_raw}] # add other parameters here if required
     )
@@ -44,7 +44,7 @@ def generate_launch_description():
     irob_interface_instant = launch_ros.actions.Node(
         package='irob_interface',
         executable='iRob_interface',
-        namespace='r1',
+        namespace='r2',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_iRob_interface_esp32.yaml')]
     )
@@ -53,7 +53,7 @@ def generate_launch_description():
     irob_controller_instant = launch_ros.actions.Node(
         package='irob_controller',
         executable='irob_controller',
-        namespace='r1',
+        namespace='r2',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_iRob_controller.yaml')]
     )
@@ -62,7 +62,7 @@ def generate_launch_description():
     hokuyo_back_instant = launch_ros.actions.Node(
         package='ust_05ln_ros2',
         executable='urg_node',
-        namespace='r1',
+        namespace='r2',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust08.yaml')]
     )
@@ -70,7 +70,7 @@ def generate_launch_description():
     hokuyo_front_instant = launch_ros.actions.Node(
         package='ust_05ln_ros2',
         executable='urg_node',
-        namespace='r1',
+        namespace='r2',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust05.yaml')]
     )
@@ -79,7 +79,7 @@ def generate_launch_description():
         package='cartographer_ros',
         executable='cartographer_node',
         name='cartographer_node',
-        namespace='r1',
+        namespace='r2',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', configuration_directory,
@@ -92,7 +92,7 @@ def generate_launch_description():
         package='cartographer_ros',
         executable='cartographer_occupancy_grid_node',
         name='cartographer_occupancy_grid_node',
-        namespace='r1',
+        namespace='r2',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-resolution', resolution, '-publish_period_sec', publish_period_sec]
