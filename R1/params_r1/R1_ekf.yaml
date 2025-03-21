@@ -1,45 +1,28 @@
-### ekf config file ###
-ekf_filter_node:
-    ros__parameters:
-        frequency: 30.0
-#        sensor_timeout: 0.1
-#        transform_timeout: 1.0
-        two_d_mode: true
-        publish_tf: false
+complementary_filter_gain_node:
+  ros__parameters:
+    gain_acc: 0.01
+    gain_mag: 0.01
+    bias_alpha: 0.01
+    do_bias_estimation: true
+    do_adaptive_gain: true
+    use_mag: false
+    fixed_frame: "odom_r1"
+    publish_tf: false    # Let the EFK publish transfor instead
+    reverse_tf: false
+    constant_dt: 0.0
+    publish_debug_topics: false
 
-        map_frame: map              # Defaults to "map" if unspecified
-        odom_frame: odom_r1            # Defaults to "odom" if unspecified
-        base_link_frame: base_link_r1  # Defaults to "base_link" if unspecified
-        world_frame: odom_r1           # Defaults to the value of odom_frame if unspecified
+    qos_overrides:
+      /imu/data_raw:
+        subscription:
+          depth: 10
+          durability: volatile
+          history: keep_last
+          reliability: reliable
 
-# iRob Controller's Odometry
-        odom0: wheel_odom_r1
-        odom0_config: [false,  false,  false,
-                       false, false, false,
-                       true, true, false,
-                       false, false, true,
-                       false, false, false]
-        odom0_differential: false
-
-# RF2O odometry 
-        odom1: odom_rf2o_r1
-        odom1_config: [false, false, false,
-                       false, false, false,
-                       true, true, false,
-                       false, false, true,
-                       false, false, false]
-        odom1_differential: false
-
-# On board IMU from complementary filter
-        imu0: imu/data_r1
-        imu0_config: [false, false, false,
-                      false, false, true,
-                      false, false, false,
-                      false, false, true,
-                      true, true, false]
-        imu0_differential: true
-        imu0_relative: true
-        imu0_remove_gravitational_acceleration: true
-        imu0_linear_acceleration_rejection_threshold: 0.11
-#        imu0_angular_velocity_rejection_threshold: 1000.0
-        
+      /imu/mag:
+        subscription:
+          depth: 10
+          durability: volatile
+          history: keep_last
+          reliability: reliable

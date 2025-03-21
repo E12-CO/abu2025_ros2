@@ -7,4 +7,4 @@ iRob_controller:
     robot_length: 0.1275  # 0.255 m
     wheel_radius: 0.05
     gear_ratio: 82.00
-    publish_tf: false   # Let the EFK publish transfor instead
+    publish_tf: false   # Let the Cartographer do the job
