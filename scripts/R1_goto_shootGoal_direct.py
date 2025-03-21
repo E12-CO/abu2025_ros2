@@ -65,6 +65,7 @@ class R1GotoShooter(Node):
         hoopMark.scale.z = 0.5
         hoopMark.color.a = 1.0
         hoopMark.color.r = 1.0
+        hoopMark.color.r = 0.5
         hoopMark.pose.position.x = 13.0
         hoopMark.pose.position.y = -3.0
         hoopMark.pose.position.z = 0.5
