@@ -140,8 +140,9 @@ class carto_start_trajec(Node):
 
 def getKey():
 	tty.setraw(sys.stdin.fileno())
-	select.select([sys.stdin], [], [], 0)
-	key = sys.stdin.read(1)
+    key = ''
+	if select.select([sys.stdin], [], [], 0.05) == ([sys.stdin], [], []):
+		key = sys.stdin.read(1)
 	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
 	return key
 
