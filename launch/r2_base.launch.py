@@ -14,7 +14,7 @@ def generate_launch_description():
 
      # Specify the name of the package and path to xacro file within the package
     pkg_name = 'abu2025_ros2'
-    file_subpath = 'R2/description_r2/robot.urdf.xacro'
+    file_subpath = 'R2/description_r2/robot_r2.urdf.xacro'
     
     # Use xacro to process the file
     xacro_file = os.path.join(get_package_share_directory(pkg_name),file_subpath)
