@@ -5,6 +5,7 @@ project(abu2025_ros2)
 # find dependencies
 # Default ROS2 dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(robot_state_publisher REQUIRED)
 find_package(xacro REQUIRED)
 
@@ -26,10 +27,16 @@ find_package(robot_localization REQUIRED)
 find_package(cartographer_ros REQUIRED)
 find_package(slam_toolbox REQUIRED)
 
+ament_python_install_package(${PROJECT_NAME})
 
 install(
- DIRECTORY launch R1 R2 params_global meshes maps 
+ DIRECTORY launch R1 R2 params_global meshes maps worlds scripts
  DESTINATION share/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+ scripts/gameplay.py
+ DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()
