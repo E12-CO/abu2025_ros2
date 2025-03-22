@@ -2,6 +2,12 @@
 # ABU 2025 semi-auto gameplay system for R1 and R2 robot
 # Coded by TinLethax (RB26)
 
+# on R1 run
+# ros2 run abu2025_ros2 gameplay.py --ros-args -r __ns:=/r1  -r to_buddy:=/r2/from_buddy
+
+# on R2 run
+# ros2 run abu2025_ros2 gameplay.py --ros-args -r __ns:=/r2 -p "self_robot_frame:=base_link_r2" -p "buddy_robot_frame:=base_link_r1" -r to_buddy:=/r1/from_buddy
+
 import math
 import sys
 
@@ -61,7 +67,7 @@ class abugameplay(Node):
         
         # iRob maneuv3r stuffs
         self.irobCmdPub_ = self.create_publisher(String, 'irob_cmd', 10)
-        self.irobStatSub_ = self.create_subscription(String, 'rob_stat', self.irobStatCallback, 10)
+        self.irobStatSub_ = self.create_subscription(String, 'irob_stat', self.irobStatCallback, 10)
         
         # Hoop pose
         self.hoopPose = PoseStamped()
@@ -167,6 +173,8 @@ class abugameplay(Node):
         
     # receive message from buddy
     def msg_BuddyToSelf(self, msg):
+        # self.get_logger().info('Received data from buddy : ' + msg.data)
+    
         return
 
     # send iRob maneuv3r command
@@ -215,8 +223,8 @@ class abugameplay(Node):
                 (self.buddyPose.transform.translation.x - self.selfPose.transform.translation.x)
             )
         # 3. Calculate the X,Y goal point relative to the buddy robot position. Position in map frame
-        self.goalPose.pose.position.x = (self.shootRadius * math.cos(heading + 3.141593)) + self.hoopPose.pose.position.x
-        self.goalPose.pose.position.y = (self.shootRadius * math.sin(heading + 3.141593)) + self.hoopPose.pose.position.y
+        self.goalPose.pose.position.x = (self.shootRadius * math.cos(heading + 3.141593)) + self.buddyPose.transform.translation.x
+        self.goalPose.pose.position.y = (self.shootRadius * math.sin(heading + 3.141593)) + self.buddyPose.transform.translation.y
         self.draw_shootMarker(self.goalPose.pose.position.x, self.goalPose.pose.position.y)
         # 4. The heading will be used to control robot orientation to face the buddy
         q = transforms3d.euler.euler2quat(0, 0, heading, 'sxyz')
@@ -274,13 +282,19 @@ class abugameplay(Node):
             self.get_logger().warning('Lookup transform error, will skip this cycle...')
             return
 
-        if key == 'r':
-            self.calculate_passGoal()
+        self.msg_selfToBuddy('Hello buddy! I\'m ' + self.get_namespace())
 
+        if key == 'r':
+            self.calculate_shootGoal()
+        elif key == 'p':
+            self.calculate_passGoal()
+        elif key == 'c':
+            rclpy.shutdown()
+            
         return
 
 def getKey():
-    tty.setcbreak(sys.stdin.fileno())
+    tty.setraw(sys.stdin.fileno())
     key = ''
     if select.select([sys.stdin], [], [], 0.05) == ([sys.stdin], [], []):
         key = sys.stdin.read(1)
