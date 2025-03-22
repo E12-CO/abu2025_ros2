@@ -64,10 +64,24 @@ def generate_launch_description():
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust05.yaml')]
     )
 
+    # Gameplay System
+    gameplay_instant = launch_ros.actions.Node(
+        package=pkg_name,
+        executable='gameplay.py',
+        namespace='r1',
+        output='screen',
+        remappings=[('to_buddy', '/r2/from_buddy')],
+        parameters=[
+            {'self_robot_frame','base_link_r1'},
+            {'buddy_robot_frame','base_link_r2'}
+            ]
+    )
+
     return launch.LaunchDescription([
         node_robot_state_publisher,
         irob_interface_instant,
         irob_controller_instant,
         hokuyo_front_instant,
-        hokuyo_back_instant
+        hokuyo_back_instant,
+        gameplay_instant
     ])
