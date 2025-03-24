@@ -16,9 +16,9 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     # Process the URDF file
-    pkg_path = os.path.join(get_package_share_directory('abu_holonomic'))
-    xacro_file_r1 = os.path.join(pkg_path,'description','robot_r1.urdf.xacro')
-    xacro_file_r2 = os.path.join(pkg_path,'description','robot_r2.urdf.xacro')
+    pkg_path = os.path.join(get_package_share_directory('abu2025_ros2'))
+    xacro_file_r1 = os.path.join(pkg_path,'R1/description_r1','robot_r1.urdf.xacro')
+    xacro_file_r2 = os.path.join(pkg_path,'R2/description_r2','robot_r2.urdf.xacro')
     robot_description_config_r1 = xacro.process_file(xacro_file_r1)
     robot_description_config_r2 = xacro.process_file(xacro_file_r2)
 
