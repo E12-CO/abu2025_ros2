@@ -51,6 +51,7 @@ def generate_launch_description():
     hokuyo_back_instant = launch_ros.actions.Node(
         package='ust_05ln_ros2',
         executable='urg_node',
+        name='urg_node_back',
         namespace='r1',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust08_front.yaml')]
@@ -59,6 +60,7 @@ def generate_launch_description():
     hokuyo_front_instant = launch_ros.actions.Node(
         package='ust_05ln_ros2',
         executable='urg_node',
+        name='urg_node_front',
         namespace='r1',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust05.yaml')]
