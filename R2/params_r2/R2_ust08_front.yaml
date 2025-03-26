@@ -1,4 +1,4 @@
-urg_node:
+r2/urg_node_front:
   ros__parameters:
     serial_port: "/dev/hokuyo_L2204511"
     laser_frame_id: "laser_frame1_r2"

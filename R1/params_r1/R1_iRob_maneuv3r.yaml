@@ -1,4 +1,4 @@
-iRob_maneuv3r:
+r1/iRob_maneuv3r:
     ros__parameters:
         map_frame_id: "map"
         odom_frame_id: "odom_r1"

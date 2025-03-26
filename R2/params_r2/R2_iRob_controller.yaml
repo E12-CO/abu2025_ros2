@@ -1,4 +1,4 @@
-iRob_controller:
+r2/iRob_controller:
   ros__parameters:
     robot_frame_id: "base_link_r2"
     odom_frame_id: "odom_r2"

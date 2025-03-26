@@ -1,4 +1,4 @@
-iRob_Interface:
+r1/iRob_Interface:
     ros__parameters:
         serial_port:            "/dev/iRob"
         robot_frame_id:         "base_link_r1"
