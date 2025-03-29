@@ -36,6 +36,7 @@ install(
 
 install(PROGRAMS
  scripts/gameplay.py
+ scripts/socketABU_Pose.py
  DESTINATION lib/${PROJECT_NAME}
 )
 

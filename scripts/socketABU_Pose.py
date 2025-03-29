@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import socket
 import time
 import errno
@@ -57,7 +58,7 @@ class socket_pose(Node):
 		# Lookup for R1 transform from Map to Baselink
 		try:
 			self.r1Pose = self.tf_buffer.lookup_transform(
-                		"map", "chassis_r1",  rclpy.time.Time()
+                		"map", "base_link_r1",  rclpy.time.Time()
             		)
 
 			self.r1PoseStr = (
@@ -81,7 +82,7 @@ class socket_pose(Node):
 		# Loopup for R2 transform from Map to Baselink
 		try:
 			self.r2Pose = self.tf_buffer.lookup_transform(
-                		"map", "chassis_r2", rclpy.time.Time()
+                		"map", "base_link_r2", rclpy.time.Time()
             		)
 
 			self.r2PoseStr = (
