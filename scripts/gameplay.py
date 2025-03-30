@@ -15,7 +15,6 @@ import transforms3d
 import rclpy
 import tf2_ros
 import tf2_geometry_msgs
-
 from rclpy.node import Node
 
 from std_msgs.msg import String
@@ -23,16 +22,35 @@ from geometry_msgs.msg import PoseStamped, TransformStamped
 from visualization_msgs.msg import Marker
 from irob_msgs.msg import IrobCmdMsg
 
-import os, sys, select, termios, tty
+import os, signal, sys, select, termios, tty
+import serial
 
 settings = termios.tcgetattr(sys.stdin)
+
+JOY_DATA_LEN = 0 # Joy data length
 
 class abugameplay(Node):
     def __init__(self):
         super().__init__('abu2025_gameplay')
 
+        try:
+            self.arduinoSerial = serial.Serial(port='/dev/espjoy', baudrate=115200, timeout=0.025)
+
+        except(
+            serial.SerialException
+        ):
+            self.get_logger().error('Can\'t access ESP32 Joy serial port!')
+            # signal.raise_signal( signal.SIGINT )
+
         # FSM
         self.mainFSM = 'idle'
+        
+        # Team color and playmode
+        self.team_color = ''
+        self.play_mode = ''
+        
+        # Emergency button pressed flag
+        self.emerFlag = False
         
         # Key press (temporary)
         self.key = '' 
@@ -84,6 +102,13 @@ class abugameplay(Node):
         self.irobCmdPub_ = self.create_publisher(IrobCmdMsg, 'irob_cmd', 10)
         self.irobStatSub_ = self.create_subscription(IrobCmdMsg, 'irob_stat', self.irobStatCallback, 10)
         
+        # Node-red signal subscriber
+        # Emergency soft-stop topic
+        self.emerSub_ = self.create_subscription(String, '/soft_emergency', self.softEmerCallback, 10)
+        # Teammode and PLaymode topic
+        self.teamSub_ = self.create_subscription(String, '/teammode', self.teamModeCallback, 10)
+        self.playSub_ = self.create_subscription(String, '/playmode', self.playModeCallback, 10)
+        
         # Hoop pose
         self.hoopPose = PoseStamped()
         self.hoopPose.pose.position.x = 13.0
@@ -95,6 +120,7 @@ class abugameplay(Node):
         self.goalPose = PoseStamped()
         
         self.timer = self.create_timer(0.05, self.timer_callback)
+        # self.serialTimer = self.create_timer(0.05, self.serial_callback)
         self.get_logger().info(f"Robot Club Engineering KMITL : {self.selfNamespace} ABU2025 gameplay system...")
 
     # Convert quaternion to euler yaw
@@ -259,7 +285,14 @@ class abugameplay(Node):
             case 'NoBall':
                 self.get_logger().info('Buddy has no ball!')
                 self.buddyBallPossesion = False
-                
+            
+            case 'Emer':
+                self.get_logger().warning('Received emergency stop signal from buddy!')
+                # Set the gameplay FSM to idle
+                self.abu_gameplayFSM = 'idle'
+                # Stop iRob maneuv3r
+                self.irobSendCmd('stop')
+            
             case _:
                 return
                 
@@ -280,7 +313,24 @@ class abugameplay(Node):
         self.get_logger().info(f'Got iRob message! : {msg.irobcmd}')
     
         return
-
+        
+    # Soft emergency response
+    def softEmerCallback(self, msg):
+        # Set the gameplay FSM to idle
+        self.abu_gameplayFSM = 'idle'
+        # Stop iRob maneuv3r
+        self.irobSendCmd('stop')
+        
+        self.get_logger().warning('Got the soft EMERGENCY signal!') 
+        
+    # team color callback
+    def teamModeCallback(self, msg):
+        self.team_color = msg.data
+        
+    # play mode callback
+    def playModeCallback(self, msg):
+        self.play_mode = msg.data
+        
     # Calculate shoot goal pose
     def calculate_shootGoal(self):
         self.get_logger().info('Calculating shoot pose...')
@@ -361,12 +411,14 @@ class abugameplay(Node):
         # 5. Publish goal_pose
         self.goalPub_.publish(self.goalPose)
 
-    def calculate_poseHome(self):
+    def calculate_homeGoal(self):
         # 1. pick home pose 
         if self.selfNamespace == '/r1':
+            # Home pose of R1 robot
             home_x = 0.0
             home_y = 0.0
         elif self.selfNamespace == '/r2':
+            # Home pose of R2 robot
             home_x = 0.0
             home_y = -1.0
         else:
@@ -384,8 +436,7 @@ class abugameplay(Node):
         self.goalPose.pose.orientation.z = q[3]
         
         self.goalPub_.publish(self.goalPose)
-        
-            
+           
     def abu_gameplayFSM(self):
         match self.mainFSM:
             case 'idle': # Start case
@@ -442,14 +493,28 @@ class abugameplay(Node):
             return
 
         if self.key == 'h':
-            self.calculate_poseHome()
+            self.calculate_homeGoal()
         elif self.key == 'g':
             self.msg_selfToBuddy('PossesState')
+
+        if self.emerFlag is True:
+            return
 
         self.abu_gameplayFSM()
         self.draw_possesionMarker()
         
         return
+
+    # def serial_callback(self):
+        # global JOY_DATA_LEN
+        # raw_bytes = self.arduinoSerial.read(JOY_DATA_LEN)
+        
+        # Check if we found the header
+        # if str(raw_bytes[0:2].decode()) == 'rb':
+            # self.get_logger().info('Received new joy data')
+        # else:
+            # return
+        
 
 def getKey():
     tty.setraw(sys.stdin.fileno())
