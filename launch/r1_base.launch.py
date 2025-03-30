@@ -48,13 +48,20 @@ def generate_launch_description():
     )
 
     # Hokuyo UST laser scanners
-    hokuyo_back_instant = launch_ros.actions.Node(
-        package='ust_05ln_ros2',
-        executable='urg_node',
-        name='urg_node_back',
+    rplidar_back_instant = launch_ros.actions.Node(
+        package='sllidar_ros2',
+        executable='sllidar_node',
+        name='sllidar_node',
         namespace='r1',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust08_front.yaml')]
+        remappings=[('scan', 'scan_2')],
+        parameters=[{'channel_type':'serial',
+                     'serial_port': '/dev/back_lidar', 
+                     'serial_baudrate': 460800, 
+                     'frame_id': 'lidar_link_2_r1',
+                     'inverted': False, 
+                     'angle_compensate': True, 
+                     'scan_mode': 'Standard'}]
     )
 
     hokuyo_front_instant = launch_ros.actions.Node(
@@ -63,7 +70,7 @@ def generate_launch_description():
         name='urg_node_front',
         namespace='r1',
         output='screen',
-        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust05.yaml')]
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust08_front.yaml')]
     )
 
     # Gameplay System
