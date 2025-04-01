@@ -50,14 +50,14 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    <model name='lapangan'>
+    <model name='abu_field'>
       <pose>0 0 0 0 -0 0</pose>
       <static>1</static>
       <link name='body'>
         <visual name='visual'>
           <geometry>
             <mesh>
-              <uri>model://lapangan/meshes/lapangan.dae</uri>
+              <uri>model://abu_field/meshes/abu_field.dae</uri>
               <scale>0.01 0.01 0.01</scale>
             </mesh>
           </geometry>
@@ -65,7 +65,7 @@
         <collision name='collision'>
           <geometry>
             <mesh>
-              <uri>model://lapangan/meshes/lapangan.dae</uri>
+              <uri>model://abu_field/meshes/abu_field.dae</uri>
               <scale>0.01 0.01 0.01</scale>
             </mesh>
           </geometry>
@@ -124,7 +124,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='lapangan'>
+      <model name='abu_field'>
         <pose>7.5 -4 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='body'>
