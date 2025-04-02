@@ -43,7 +43,7 @@ TRAJECTORY_BUILDER_2D.use_online_correlative_scan_matching = true  -- Whether to
 -- TRAJECTORY_BUILDER_2D.real_time_correlative_scan_matcher.linear_search_window = 0.2 -- Default 0.1
 
 -- TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 1.
-TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 10 -- default 0.01, 10 seems better in simulation
+TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 0.8 
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 2
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.ceres_solver_options.max_num_iterations = 1000
 
