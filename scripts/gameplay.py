@@ -105,9 +105,6 @@ class abugameplay(Node):
         # Node-red signal subscriber
         # Emergency soft-stop topic
         self.emerSub_ = self.create_subscription(String, '/soft_emergency', self.softEmerCallback, 10)
-        # Teammode and PLaymode topic
-        self.teamSub_ = self.create_subscription(String, '/teammode', self.teamModeCallback, 10)
-        self.playSub_ = self.create_subscription(String, '/playmode', self.playModeCallback, 10)
         
         # Hoop pose
         self.hoopPose = PoseStamped()
@@ -231,8 +228,8 @@ class abugameplay(Node):
         possesMark.color.a = 1.0
         possesMark.color.g = 0.4
         possesMark.color.r = 1.0
-        possesMark.pose.position.x = self.selfPose.transform.translation.x
-        possesMark.pose.position.y = self.selfPose.transform.translation.y
+        possesMark.pose.position.x = self.selfPose.transform.translation.x + 0.5
+        possesMark.pose.position.y = self.selfPose.transform.translation.y - 0.5
         possesMark.pose.position.z = 0.5
         self.possMarkPub_.publish(possesMark)
         
@@ -324,14 +321,6 @@ class abugameplay(Node):
         self.irobSendCmd('stop')
         
         self.get_logger().warning('Got the soft EMERGENCY signal!') 
-        
-    # team color callback
-    def teamModeCallback(self, msg):
-        self.team_color = msg.data
-        
-    # play mode callback
-    def playModeCallback(self, msg):
-        self.play_mode = msg.data
         
     # Calculate shoot goal pose
     def calculate_shootGoal(self):
