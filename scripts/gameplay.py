@@ -138,7 +138,8 @@ class abugameplay(Node):
             self.selfPose = self.tf_buffer_self.lookup_transform(
                  "map",
                  self.self_robot_frame,
-                 rclpy.time.Time()
+                 rclpy.time.Time(),
+                 timeout=rclpy.duration.Duration(seconds=0.5)
                 )
             
        	except(
@@ -161,7 +162,8 @@ class abugameplay(Node):
             self.buddyPose = self.tf_buffer_buddy.lookup_transform(
                  "map",
                  self.buddy_robot_frame,
-                 rclpy.time.Time()
+                 rclpy.time.Time(),
+                 timeout=rclpy.duration.Duration(seconds=0.5)
                 )
             
        	except(
@@ -289,7 +291,7 @@ class abugameplay(Node):
             case 'Emer':
                 self.get_logger().warning('Received emergency stop signal from buddy!')
                 # Set the gameplay FSM to idle
-                self.abu_gameplayFSM = 'idle'
+                self.mainFSM = 'idle'
                 # Stop iRob maneuv3r
                 self.irobSendCmd('stop')
             
@@ -317,7 +319,7 @@ class abugameplay(Node):
     # Soft emergency response
     def softEmerCallback(self, msg):
         # Set the gameplay FSM to idle
-        self.abu_gameplayFSM = 'idle'
+        self.mainFSM = 'idle'
         # Stop iRob maneuv3r
         self.irobSendCmd('stop')
         
