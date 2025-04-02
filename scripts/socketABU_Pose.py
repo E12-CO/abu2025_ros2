@@ -2,6 +2,7 @@
 import socket
 import time
 import errno
+import signal
 
 import transforms3d
 
@@ -21,6 +22,7 @@ class socket_pose(Node):
 		super().__init__('robotPoseSocketNode')
 		
 		self.sock = socket.socket()
+		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 		try:
 			self.sock.bind(("127.0.0.1", 5069))
@@ -58,7 +60,7 @@ class socket_pose(Node):
 		# Lookup for R1 transform from Map to Baselink
 		try:
 			self.r1Pose = self.tf_buffer.lookup_transform(
-                		"map", "base_link_r1",  rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.5)
+                		"map", "base_link_r1",  rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.1)
             		)
 
 			self.r1PoseStr = (
@@ -82,7 +84,7 @@ class socket_pose(Node):
 		# Loopup for R2 transform from Map to Baselink
 		try:
 			self.r2Pose = self.tf_buffer.lookup_transform(
-                		"map", "base_link_r2", rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.5)
+                		"map", "base_link_r2", rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.1)
             		)
 
 			self.r2PoseStr = (
@@ -113,16 +115,25 @@ class socket_pose(Node):
 			self.conn = None
 			self.sock.listen(1) # Listen for next connection
 
+def ros_exit():
+	print('ROS exit!')
 
 def main(args=None):
 	rclpy.init(args=args)
 	
 	socketPoseNode = socket_pose()
 	rclpy.spin(socketPoseNode)
-	socketPoseNode.conn.close()
+	socketPoseNode.sock.conn.close()
 	socketPoseNode.sock.close()
 	socketPoseNode.destroy_node()
+
 	rclpy.shutdown()
+	
+
+def on_exit(*args):
+	print('Signal exit')
+	exit(0);
 
 if __name__ == "__main__":
+	signal.signal(signal.SIGINT, on_exit)
 	main()
