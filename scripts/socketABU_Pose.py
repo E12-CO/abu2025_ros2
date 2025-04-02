@@ -58,7 +58,7 @@ class socket_pose(Node):
 		# Lookup for R1 transform from Map to Baselink
 		try:
 			self.r1Pose = self.tf_buffer.lookup_transform(
-                		"map", "base_link_r1",  rclpy.time.Time()
+                		"map", "base_link_r1",  rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.5)
             		)
 
 			self.r1PoseStr = (
@@ -82,7 +82,7 @@ class socket_pose(Node):
 		# Loopup for R2 transform from Map to Baselink
 		try:
 			self.r2Pose = self.tf_buffer.lookup_transform(
-                		"map", "base_link_r2", rclpy.time.Time()
+                		"map", "base_link_r2", rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.5)
             		)
 
 			self.r2PoseStr = (
