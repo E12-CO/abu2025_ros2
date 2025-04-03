@@ -25,7 +25,7 @@ find_package(cartographer_ros REQUIRED)
 ament_python_install_package(${PROJECT_NAME})
 
 install(
- DIRECTORY launch R1 R2 params_global models meshes maps worlds scripts
+ DIRECTORY launch R1 R2 params_global models meshes maps worlds scripts rviz
  DESTINATION share/${PROJECT_NAME}
 )
 
