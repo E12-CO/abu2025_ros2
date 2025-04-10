@@ -10,6 +10,8 @@
 
 import math
 import sys
+import subprocess
+import os, signal, sys, select, termios, tty
 
 import transforms3d
 import rclpy
@@ -22,8 +24,7 @@ from geometry_msgs.msg import PoseStamped, TransformStamped
 from visualization_msgs.msg import Marker
 from irob_msgs.msg import IrobCmdMsg
 
-import os, signal, sys, select, termios, tty
-import serial
+import serial # pyserial
 
 settings = termios.tcgetattr(sys.stdin)
 
@@ -44,11 +45,6 @@ class abugameplay(Node):
 
         # FSM
         self.mainFSM = 'idle'
-        
-        # Team color and playmode
-        self.team_color = ''
-        self.play_mode = ''
-        
         # Emergency button pressed flag
         self.emerFlag = False
         
@@ -67,12 +63,12 @@ class abugameplay(Node):
 
         # create TF2 transform listener, We're looking for current R1 and R2 position in the map
         # self Transform Listener
-        self.tf_buffer_self = tf2_ros.Buffer()
+        self.tf_buffer_self = tf2_ros.Buffer(cache_time=rclpy.duration.Duration(seconds=1.0))
         self.tf_listener_self = tf2_ros.TransformListener(self.tf_buffer_self, self)
         self.selfPose = TransformStamped()
         
         # buddy Transform Listener
-        self.tf_buffer_buddy = tf2_ros.Buffer()
+        self.tf_buffer_buddy = tf2_ros.Buffer(cache_time=rclpy.duration.Duration(seconds=1.5))
         self.tf_listener_buddy = tf2_ros.TransformListener(self.tf_buffer_buddy, self)
         self.buddyPose = TransformStamped()
 
@@ -102,9 +98,14 @@ class abugameplay(Node):
         self.irobCmdPub_ = self.create_publisher(IrobCmdMsg, 'irob_cmd', 10)
         self.irobStatSub_ = self.create_subscription(IrobCmdMsg, 'irob_stat', self.irobStatCallback, 10)
         
-        # Node-red signal subscriber
-        # Emergency soft-stop topic
+        # Node-red signal subscribers
+        # note that the topic name is absolute path with /, indication that it's overriding the namespace.
+        
+        # Emergency soft-stop topic 
         self.emerSub_ = self.create_subscription(String, '/soft_emergency', self.softEmerCallback, 10)
+        
+        # Start and Stop topic
+        self.ssSub_ = self.create_subscription(String, '/start_stop', self.ssCallback, 10)
         
         # Hoop pose
         self.hoopPose = PoseStamped()
@@ -127,7 +128,7 @@ class abugameplay(Node):
 
     # Listen for self transform map --> rX_base_link
     def tf_selfListener(self):
-        if not self.tf_buffer_self.can_transform("map", self.self_robot_frame, rclpy.time.Time()):
+        if not self.tf_buffer_self.can_transform("map", self.self_robot_frame, rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.5)):
             self.get_logger().warning('Can\'t get self robot transform right now...')
             return 1
             
@@ -151,7 +152,7 @@ class abugameplay(Node):
     
     # Listen for buddy transform map --> rX_base_link
     def tf_buddyListener(self):    
-        if not self.tf_buffer_buddy.can_transform("map", self.buddy_robot_frame, rclpy.time.Time()):
+        if not self.tf_buffer_buddy.can_transform("map", self.buddy_robot_frame, rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.5)):
             self.get_logger().warning('Can\'t get buddy robot transform right now...')
             return 1
             
@@ -322,6 +323,22 @@ class abugameplay(Node):
         
         self.get_logger().warning('Got the soft EMERGENCY signal!') 
         
+    # Start and Stop button callback
+    def ssCallback(self, msg):
+        match msg.data:
+            case 'start':
+                self.get_logger().info('Starting Cartographer ROS')
+                # Start cartographer 
+                self.carto_startNode()
+            
+            case 'stop':
+                self.get_logger().info('Stopping Cartographer ROS')
+                # Kill cartographer
+                self.carto_killNode()
+                
+            case _:
+                return
+        
     # Calculate shoot goal pose
     def calculate_shootGoal(self):
         self.get_logger().info('Calculating shoot pose...')
@@ -402,6 +419,7 @@ class abugameplay(Node):
         # 5. Publish goal_pose
         self.goalPub_.publish(self.goalPose)
 
+    # Calculate home goal pose.
     def calculate_homeGoal(self):
         # 1. pick home pose 
         if self.selfNamespace == '/r1':
@@ -428,6 +446,21 @@ class abugameplay(Node):
         
         self.goalPub_.publish(self.goalPose)
            
+    # Kill cartographer node
+    def carto_killNode(self):
+        subprocess.run(['pkill', '-f', 'cartographer_node']) # Kill cartographer node
+        subprocess.run(['pkill', '-f', 'cartographer_occupancy_grid_node']) # Kill cartographer occupancy grid node
+        
+    # Launch cartographer node
+    def carto_startNode(self):
+        if self.selfNamespace == '/r1':
+            subprocess.Popen(['ros2', 'launch', 'abu2025_ros2', 'r1_localize.launch.py'])
+        elif self.selfNamespace == '/r2':
+            subprocess.Popen(['ros2', 'launch', 'abu2025_ros2', 'r2_localize.launch.py'])
+        else:
+            return
+           
+    # Gameplay statemachine       
     def abu_gameplayFSM(self):
         match self.mainFSM:
             case 'idle': # Start case
