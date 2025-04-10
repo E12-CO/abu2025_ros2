@@ -1,0 +1,983 @@
+[
+    {
+        "id": "7917b3a101f23877",
+        "type": "tab",
+        "label": "ABU flow",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0c1c65acec23e5dc",
+        "type": "ui_tab",
+        "name": "Robot Club KMITL 🤖| ABU Robocon 2025",
+        "icon": "",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "82d76908de61e511",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-dark",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#fff947",
+                "baseFont": "Tahoma,Geneva,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#097479",
+                    "value": "#fff947",
+                    "edited": true
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#fff947",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#fffb93",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#555555",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#eeeeee",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#fff947",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "Tahoma,Geneva,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "yellow",
+                "accents": "blue",
+                "warn": "orange",
+                "background": "grey",
+                "palette": "dark"
+            }
+        },
+        "site": {
+            "name": "Robot Club ABU",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "none",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 40,
+                "sy": 40,
+                "gx": 3,
+                "gy": 3,
+                "cx": 0,
+                "cy": 0,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "5d5b13beb45de71e",
+        "type": "ui_group",
+        "name": "Cartographer",
+        "tab": "0c1c65acec23e5dc",
+        "order": 1,
+        "disp": true,
+        "width": 5,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "3bf1bfae563320f3",
+        "type": "ui_group",
+        "name": "Play mode",
+        "tab": "0c1c65acec23e5dc",
+        "order": 2,
+        "disp": true,
+        "width": 5,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "b1ae9b213677f518",
+        "type": "ui_group",
+        "name": "Robots on the map",
+        "tab": "0c1c65acec23e5dc",
+        "order": 5,
+        "disp": true,
+        "width": "20",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "18f5bbaff8449a33",
+        "type": "ui_group",
+        "name": "Topic list",
+        "tab": "0c1c65acec23e5dc",
+        "order": 3,
+        "disp": true,
+        "width": 4,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a3e7507b42dddf61",
+        "type": "ui_group",
+        "name": "Emergency",
+        "tab": "0c1c65acec23e5dc",
+        "order": 4,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "22dac5459633d087",
+        "type": "ui_button",
+        "z": "7917b3a101f23877",
+        "name": "",
+        "group": "5d5b13beb45de71e",
+        "order": 2,
+        "width": 5,
+        "height": 3,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "White",
+        "bgcolor": "#5a6ec8",
+        "className": "",
+        "icon": "",
+        "payload": "start",
+        "payloadType": "str",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 110,
+        "y": 120,
+        "wires": [
+            [
+                "0daf77047ed47132",
+                "5a98d6b80ab12ac6",
+                "5a56b3b5505fd473",
+                "5cdce704c9a0fb88"
+            ]
+        ]
+    },
+    {
+        "id": "0daf77047ed47132",
+        "type": "ui_text",
+        "z": "7917b3a101f23877",
+        "group": "5d5b13beb45de71e",
+        "order": 1,
+        "width": 5,
+        "height": 1,
+        "name": "",
+        "label": "Launch buttons",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 420,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "86653abb030a9582",
+        "type": "ui_button",
+        "z": "7917b3a101f23877",
+        "name": "",
+        "group": "5d5b13beb45de71e",
+        "order": 3,
+        "width": 5,
+        "height": 3,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "White",
+        "bgcolor": "#ff6e5a",
+        "className": "",
+        "icon": "",
+        "payload": "stop",
+        "payloadType": "str",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 110,
+        "y": 200,
+        "wires": [
+            [
+                "5a98d6b80ab12ac6",
+                "0daf77047ed47132",
+                "6673f8b219506ec2",
+                "5a56b3b5505fd473"
+            ]
+        ]
+    },
+    {
+        "id": "87437b540cc66c91",
+        "type": "comment",
+        "z": "7917b3a101f23877",
+        "name": "Select Play mode - Unused",
+        "info": "",
+        "x": 250,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "c540e971461ec949",
+        "type": "ui_button",
+        "z": "7917b3a101f23877",
+        "name": "",
+        "group": "3bf1bfae563320f3",
+        "order": 2,
+        "width": 5,
+        "height": 3,
+        "passthru": false,
+        "label": "Defender🛡️",
+        "tooltip": "",
+        "color": "White",
+        "bgcolor": "Green",
+        "className": "",
+        "icon": "",
+        "payload": "Defender",
+        "payloadType": "str",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 130,
+        "y": 540,
+        "wires": [
+            [
+                "9d54598439135c9a",
+                "52d194cbf806a8ef",
+                "de75d018c373c757"
+            ]
+        ]
+    },
+    {
+        "id": "78ea0ca5b4da6ec9",
+        "type": "ui_button",
+        "z": "7917b3a101f23877",
+        "name": "",
+        "group": "3bf1bfae563320f3",
+        "order": 3,
+        "width": 5,
+        "height": 3,
+        "passthru": false,
+        "label": "Offender🤛",
+        "tooltip": "",
+        "color": "White",
+        "bgcolor": "#d1a700",
+        "className": "",
+        "icon": "",
+        "payload": "Offender",
+        "payloadType": "str",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 130,
+        "y": 660,
+        "wires": [
+            [
+                "9d54598439135c9a",
+                "52d194cbf806a8ef",
+                "de75d018c373c757"
+            ]
+        ]
+    },
+    {
+        "id": "9d54598439135c9a",
+        "type": "ui_text",
+        "z": "7917b3a101f23877",
+        "group": "3bf1bfae563320f3",
+        "order": 1,
+        "width": 5,
+        "height": 1,
+        "name": "",
+        "label": "Play mode : ",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 350,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "f43c7de71d72392f",
+        "type": "ui_template",
+        "z": "7917b3a101f23877",
+        "group": "b1ae9b213677f518",
+        "name": "Robots on map 🗺️",
+        "order": 1,
+        "width": "19",
+        "height": "10",
+        "format": "<div class=\"image-container\">\n    <div class=\"error-txt\">{{msg.errmsg}}</div>\n    <img src=\"/img/ABU2025_field.jpg\" alt=\"ABU Robocon 2025 Field\" width=\"750\" height=\"400\" class=\"map-img\">\n    <img src=\"/img/robotclub.jpeg\" alt=\"Robot Colub Engineering KMITL Logo\" width=\"100\" height=\"100\" class=\"rbc-img\">\n    <img src=\"/img/WE_red_logo.png\" alt=\"Wurth Electronics Logo\" width=\"100\" height=\"100\" class=\"we-img\">\n    <div class=\"r1-baselink\" style=\"bottom: {{msg.bottomR1}}px; right: {{msg.rightR1}}px; transform: rotate({{msg.rotR1}}deg);\"> R1 </div>\n    <div class=\"r2-baselink\" style=\"bottom: {{msg.bottomR2}}px; right: {{msg.rightR2}}px; transform: rotate({{msg.rotR2}}deg);\"> R2 </div>\n    <div class=\"error-txt\">{{msg.errmsg}}</div>\n</div>\n\n<style>\n    .image-container {\n        display: flex;\n        justify-content: center;\n        width: 750;\n        height: 400;\n    }\n\n    .map-img {\n        object-fit: contain;\n    }\n\n    .error-txt{\n        position: absolute;\n        display: flex;  /* Center text vertically and horizontally */\n        align-items: center; \n        justify-content: center;\n        text-align: center;\n        top: 0px;\n        left: 10px;\n        color: red;\n        font-size: 30px;\n    }\n\n    .rbc-img {\n        position: absolute;\n        top: 150px;\n        left: 230px;\n    }\n\n    .we-img{\n        position: absolute;\n        top: 150px;\n        left: 430px;\n    }\n\n    .r1-baselink {\n      position: absolute;\n      width: 38px; /* Square width */\n      height: 38px; /* Square height */\n      border-radius: 50%;\n      background-color: rgba(0, 255, 0, 0.5); /* Red with 50% transparency */\n      border: 1px solid black; /* Optional border */\n      color: white;  /* Text color */\n      font-size: 16px; /* Text size */\n      font-weight: bold;\n      display: flex;  /* Center text vertically and horizontally */\n      align-items: center; \n      justify-content: center;\n      text-align: center;\n    }\n\n    .r2-baselink {\n      position: absolute;\n      width: 38px; /* Square width */\n      height: 38px; /* Square height */\n      border-radius: 50%;\n      background-color: rgba(255, 0, 0, 0.5); /* Green with 50% transparency */\n      border: 1px solid black; /* Optional border */\n      color: white;  /* Text color */\n      font-size: 16px; /* Text size */\n      font-weight: bold;\n      display: flex;  /* Center text vertically and horizontally */\n      align-items: center; \n      justify-content: center;\n      text-align: center;\n    }\n\n</style>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "abu_map",
+        "x": 2050,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "344e555db8fca5ee",
+        "type": "comment",
+        "z": "7917b3a101f23877",
+        "name": "Robots and map display",
+        "info": "",
+        "x": 940,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "5a98d6b80ab12ac6",
+        "type": "ui_audio",
+        "z": "7917b3a101f23877",
+        "name": "Start stop anouncement",
+        "group": "5d5b13beb45de71e",
+        "voice": "Google US English",
+        "always": true,
+        "x": 450,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "52d194cbf806a8ef",
+        "type": "ui_audio",
+        "z": "7917b3a101f23877",
+        "name": "Play mode anouncement",
+        "group": "3bf1bfae563320f3",
+        "voice": "Google US English",
+        "always": true,
+        "x": 390,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "36288f89ba5ae7c3",
+        "type": "exec",
+        "z": "7917b3a101f23877",
+        "command": "ros2 node list",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "List node",
+        "x": 1080,
+        "y": 400,
+        "wires": [
+            [
+                "9aead1507d1ef413",
+                "adc358cf95a7cbed"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "9aead1507d1ef413",
+        "type": "debug",
+        "z": "7917b3a101f23877",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1280,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "b8baab9ccdbc66d8",
+        "type": "comment",
+        "z": "7917b3a101f23877",
+        "name": "Node list (activity check)",
+        "info": "",
+        "x": 950,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "adc358cf95a7cbed",
+        "type": "ui_text",
+        "z": "7917b3a101f23877",
+        "group": "18f5bbaff8449a33",
+        "order": 1,
+        "width": 4,
+        "height": 7,
+        "name": "",
+        "label": "Show node list",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1300,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "cb4d506882b7a024",
+        "type": "inject",
+        "z": "7917b3a101f23877",
+        "name": "Timer trigger",
+        "props": [],
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 860,
+        "y": 400,
+        "wires": [
+            [
+                "36288f89ba5ae7c3"
+            ]
+        ]
+    },
+    {
+        "id": "1f15bbde9ef67f26",
+        "type": "comment",
+        "z": "7917b3a101f23877",
+        "name": "Soft Emergency stop ",
+        "info": "",
+        "x": 230,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "3f09b420479f992f",
+        "type": "ui_button",
+        "z": "7917b3a101f23877",
+        "name": "",
+        "group": "a3e7507b42dddf61",
+        "order": 1,
+        "width": 6,
+        "height": 7,
+        "passthru": false,
+        "label": "⚠️EMERGENCY STOP⚠️",
+        "tooltip": "",
+        "color": "White",
+        "bgcolor": "#fc6203",
+        "className": "",
+        "icon": "",
+        "payload": "emergency stop",
+        "payloadType": "str",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 180,
+        "y": 820,
+        "wires": [
+            [
+                "2e32f3b9e823eb32",
+                "0577161ae33f9d7e"
+            ]
+        ]
+    },
+    {
+        "id": "4714c2aabc487a85",
+        "type": "inject",
+        "z": "7917b3a101f23877",
+        "name": "Timer trigger",
+        "props": [],
+        "repeat": "0.1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 860,
+        "y": 120,
+        "wires": [
+            [
+                "fb7602b6036586c2"
+            ]
+        ]
+    },
+    {
+        "id": "fb7602b6036586c2",
+        "type": "tcp request",
+        "z": "7917b3a101f23877",
+        "name": "TCP connect",
+        "server": "127.0.0.1",
+        "port": "5069",
+        "out": "sit",
+        "ret": "string",
+        "splitc": " ",
+        "newline": "",
+        "trim": false,
+        "tls": "",
+        "x": 870,
+        "y": 200,
+        "wires": [
+            [
+                "ab7cce05d71d2a5b",
+                "977eee6e25f23fbe"
+            ]
+        ]
+    },
+    {
+        "id": "ab7cce05d71d2a5b",
+        "type": "string",
+        "z": "7917b3a101f23877",
+        "name": "R1 Pose Parser",
+        "methods": [
+            {
+                "name": "split",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": "%"
+                    },
+                    {
+                        "type": "num",
+                        "value": "1"
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 1100,
+        "y": 140,
+        "wires": [
+            [
+                "063c09c97f072e4b"
+            ]
+        ]
+    },
+    {
+        "id": "977eee6e25f23fbe",
+        "type": "string",
+        "z": "7917b3a101f23877",
+        "name": "R2 Pose Parser ",
+        "methods": [
+            {
+                "name": "splitRight",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": "%"
+                    },
+                    {
+                        "type": "num",
+                        "value": "1"
+                    },
+                    {
+                        "type": "num",
+                        "value": "1"
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 1100,
+        "y": 260,
+        "wires": [
+            [
+                "c286b31125b4b975"
+            ]
+        ]
+    },
+    {
+        "id": "063c09c97f072e4b",
+        "type": "string",
+        "z": "7917b3a101f23877",
+        "name": "R1 Pose Split",
+        "methods": [
+            {
+                "name": "split",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": ","
+                    },
+                    {
+                        "type": "num",
+                        "value": "3"
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 1320,
+        "y": 140,
+        "wires": [
+            [
+                "7943cd39cede336a"
+            ]
+        ]
+    },
+    {
+        "id": "c286b31125b4b975",
+        "type": "string",
+        "z": "7917b3a101f23877",
+        "name": "R2 Pose Split",
+        "methods": [
+            {
+                "name": "split",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": ","
+                    },
+                    {
+                        "type": "num",
+                        "value": "3"
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 1320,
+        "y": 260,
+        "wires": [
+            [
+                "4f72f3e399079f8a"
+            ]
+        ]
+    },
+    {
+        "id": "7943cd39cede336a",
+        "type": "function",
+        "z": "7917b3a101f23877",
+        "name": "R1 To HTML msg ",
+        "func": "var r1_x    = (msg.payload[0] * 50) + 30;// R1 X position with offset - (20 - 10)\nvar r1_y    = msg.payload[1] * 50 - 30;// R1 Y position with offset + (20 - 2)\nvar r1_az   = msg.payload[2] * 57.2958;\n\n// Offset to 0,0 of the field\n//var r1_x = 10;\n//var r1_y = -2;\n\nmsg.rightR1  = r1_x.toString();\nmsg.bottomR1   = -r1_y.toString();\nmsg.rotR1   = r1_az.toString();\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1550,
+        "y": 140,
+        "wires": [
+            [
+                "c9907f269b2a4fb7",
+                "3addb7cf64aa42ae"
+            ]
+        ]
+    },
+    {
+        "id": "4f72f3e399079f8a",
+        "type": "function",
+        "z": "7917b3a101f23877",
+        "name": "R2 To HTML msg ",
+        "func": "var r2_x    = (msg.payload[0] * 50) + 30;// R2 X position with offset\nvar r2_y    = (msg.payload[1] * 50) - 30;// R2 Y position with offset\nvar r2_az   = msg.payload[2] * 57.2958;\n\nmsg.rightR2  = r2_x.toString();\nmsg.bottomR2 = -r2_y.toString();\nmsg.rotR2   = r2_az.toString();\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1550,
+        "y": 260,
+        "wires": [
+            [
+                "c9907f269b2a4fb7",
+                "d53e79ba65c280ca"
+            ]
+        ]
+    },
+    {
+        "id": "c9907f269b2a4fb7",
+        "type": "join",
+        "z": "7917b3a101f23877",
+        "name": "Robot Pose combine msg",
+        "mode": "custom",
+        "build": "merged",
+        "property": "",
+        "propertyType": "full",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": true,
+        "accumulate": true,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1800,
+        "y": 200,
+        "wires": [
+            [
+                "4814a57f5ef696b9",
+                "f43c7de71d72392f"
+            ]
+        ]
+    },
+    {
+        "id": "4814a57f5ef696b9",
+        "type": "debug",
+        "z": "7917b3a101f23877",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2020,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "3addb7cf64aa42ae",
+        "type": "debug",
+        "z": "7917b3a101f23877",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1760,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "d53e79ba65c280ca",
+        "type": "debug",
+        "z": "7917b3a101f23877",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1760,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "237791dc40778d40",
+        "type": "catch",
+        "z": "7917b3a101f23877",
+        "name": "Catch TCP error",
+        "scope": [
+            "fb7602b6036586c2"
+        ],
+        "uncaught": false,
+        "x": 1100,
+        "y": 200,
+        "wires": [
+            [
+                "483062bd423654ff"
+            ]
+        ]
+    },
+    {
+        "id": "483062bd423654ff",
+        "type": "function",
+        "z": "7917b3a101f23877",
+        "name": "function 1",
+        "func": "if (msg.error.message){\n    msg.errmsg = msg.error.message;\n}else{\n    msg.errmsg = \"\";\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1300,
+        "y": 200,
+        "wires": [
+            [
+                "c9907f269b2a4fb7"
+            ]
+        ]
+    },
+    {
+        "id": "2e32f3b9e823eb32",
+        "type": "exec",
+        "z": "7917b3a101f23877",
+        "command": "ros2 topic pub -1 /soft_emergency std_msgs/String 'data: stop' ",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "pub Soft Emergency signal",
+        "x": 460,
+        "y": 780,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "de75d018c373c757",
+        "type": "exec",
+        "z": "7917b3a101f23877",
+        "command": "ros2 topic pub -1 /playmode std_msgs/String 'data: ",
+        "addpay": "payload",
+        "append": "'",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "pub team color",
+        "x": 360,
+        "y": 660,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "0577161ae33f9d7e",
+        "type": "ui_audio",
+        "z": "7917b3a101f23877",
+        "name": "Emegency anouncement",
+        "group": "5d5b13beb45de71e",
+        "voice": "Google US English",
+        "always": true,
+        "x": 450,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "5a56b3b5505fd473",
+        "type": "exec",
+        "z": "7917b3a101f23877",
+        "command": "ros2 topic pub /start_stop std_msgs/msg/String \"data: ",
+        "addpay": "payload",
+        "append": "\" -1",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "publish start stop",
+        "x": 430,
+        "y": 240,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "9071175941ade0a0",
+        "type": "comment",
+        "z": "7917b3a101f23877",
+        "name": "Start and Stop button",
+        "info": "",
+        "x": 240,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "6673f8b219506ec2",
+        "type": "function",
+        "z": "7917b3a101f23877",
+        "name": "generate SIGINT",
+        "func": "msg.kill = \"SIGINT\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 210,
+        "y": 320,
+        "wires": [
+            [
+                "5cdce704c9a0fb88"
+            ]
+        ]
+    },
+    {
+        "id": "5cdce704c9a0fb88",
+        "type": "exec",
+        "z": "7917b3a101f23877",
+        "command": "python3 /home/tinlethax/abu2025_ws/install/abu2025_ros2/lib/abu2025_ros2/socketABU_Pose.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "ABU socket node",
+        "x": 430,
+        "y": 320,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    }
+]
