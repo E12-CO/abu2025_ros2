@@ -5,7 +5,7 @@ options = {
   map_builder = MAP_BUILDER,  
   trajectory_builder = TRAJECTORY_BUILDER,  
   map_frame = "map",  -- map frame name 
-  tracking_frame = "chassis_r1",  -- tracking frame name
+  tracking_frame = "base_link_r1",  -- tracking frame name
   published_frame = "base_link_r1",  -- published frame name 
   odom_frame = "odom_r1",  -- name of the odometer frame
   provide_odom_frame = false,  -- whether to provide the odometer frame
@@ -14,7 +14,7 @@ options = {
   use_odometry = false,  -- whether use odometry
   use_nav_sat = false,  -- whether use the navigation satellite 
   use_landmarks = false,  -- whether use the landmark
-  num_laser_scans = 1,  -- LiDAR number  
+  num_laser_scans = 2,  -- LiDAR number  
   num_multi_echo_laser_scans = 0,  -- number of multi-echo LiDAR  
   num_subdivisions_per_laser_scan = 1,  -- number of subdivisions for each laser scan
   num_point_clouds = 0,  -- number of cloud points
@@ -31,10 +31,10 @@ options = {
 }
  
 MAP_BUILDER.use_trajectory_builder_2d = true  -- whether use 2D SLAM
-TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 2 -- Acumulate two hokuyo scan data 
+TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 4 -- Acumulate two hokuyo scan data 
 TRAJECTORY_BUILDER_2D.submaps.num_range_data = 20  -- Default is 20
 TRAJECTORY_BUILDER_2D.min_range = 0.1  -- ignore anything smaller than the robot radius, limiting it to the minimum scan range of the lidar
-TRAJECTORY_BUILDER_2D.max_range = 7.8  -- the maximum scanning range of the lidar
+TRAJECTORY_BUILDER_2D.max_range = 11.0  -- the maximum scanning range of the lidar
 TRAJECTORY_BUILDER_2D.missing_data_ray_length = 8.0  -- Restricted to maximum LiDAR scanning range  
 TRAJECTORY_BUILDER_2D.voxel_filter_size = 0.05
 TRAJECTORY_BUILDER_2D.use_imu_data = false  -- whether use IMU data
@@ -43,7 +43,7 @@ TRAJECTORY_BUILDER_2D.use_online_correlative_scan_matching = true  -- Whether to
 -- TRAJECTORY_BUILDER_2D.real_time_correlative_scan_matcher.linear_search_window = 0.2 -- Default 0.1
 
 -- TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 1.
-TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 0.01
+TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 0.8
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 2
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.ceres_solver_options.max_num_iterations = 1000
 
