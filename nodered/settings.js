@@ -239,9 +239,9 @@ module.exports = {
      *  set a default cors policy across all static routes.
      */
     httpStatic: [
-        {path: '/home/tinlethax/pics/',    root: "/img/"}, 
-        {path: '/home/tinlethax/reports/', root: "/doc/"}, 
-        {path: '/home/tinlethax/videos/',  root: "/vid/", options: {maxAge: '1d'}}
+        {path: '/home/pi/pics/',    root: "/img/"}, 
+        {path: '/home/pi/reports/', root: "/doc/"}, 
+        {path: '/home/pi/videos/',  root: "/vid/", options: {maxAge: '1d'}}
     ],
 
     /**  

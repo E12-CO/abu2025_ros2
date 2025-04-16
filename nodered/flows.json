@@ -964,7 +964,7 @@
         "id": "5cdce704c9a0fb88",
         "type": "exec",
         "z": "7917b3a101f23877",
-        "command": "python3 /home/tinlethax/abu2025_ws/install/abu2025_ros2/lib/abu2025_ros2/socketABU_Pose.py",
+        "command": "python3 /home/pi/abu2025_ws/install/abu2025_ros2/lib/abu2025_ros2/socketABU_Pose.py",
         "addpay": "",
         "append": "",
         "useSpawn": "false",
