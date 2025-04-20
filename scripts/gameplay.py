@@ -267,42 +267,40 @@ class abugameplay(Node):
     def msg_BuddyToSelf(self, msg):
         self.get_logger().debug('Received data from buddy : ' + msg.data)
         
-        match msg.data:
-            case 'BallPass':
-                self.get_logger().info('Moving to ball pass receive position')
-                if self.receiveBallCmdFlag is False:
-                    self.receiveBallCmdFlag = True
+        if msg.data == 'BallPass':
+            self.get_logger().info('Moving to ball pass receive position')
+            if self.receiveBallCmdFlag is False:
+                self.receiveBallCmdFlag = True
                 
-            case 'BallReceived':
-                self.get_logger().info('Buddy received ball pass')
-                self.buddyBallPossesion = True
+        elif msg.data == 'BallReceived':
+            self.get_logger().info('Buddy received ball pass')
+            self.buddyBallPossesion = True
             
-            case 'PossesState':
-                self.get_logger().info('Buddy asked for ball posession status, replying...')
-                if self.selfBallPosession is True:
-                    self.msg_selfToBuddy('YesBall')
-                else:
-                    self.msg_selfToBuddy('NoBall')
+        elif msg.data == 'PossesState':
+            self.get_logger().info('Buddy asked for ball posession status, replying...')
+            if self.selfBallPosession is True:
+                self.msg_selfToBuddy('YesBall')
+            else:
+                self.msg_selfToBuddy('NoBall')
             
-            case 'YesBall':
-                self.get_logger().info('Buddy has ball!')
-                self.buddyBallPossesion = True 
+        elif msg.data == 'YesBall':
+            self.get_logger().info('Buddy has ball!')
+            self.buddyBallPossesion = True 
             
-            case 'NoBall':
-                self.get_logger().info('Buddy has no ball!')
-                self.buddyBallPossesion = False
+        elif msg.data == 'NoBall':
+            self.get_logger().info('Buddy has no ball!')
+            self.buddyBallPossesion = False
             
-            case 'Emer':
-                self.get_logger().warning('Received emergency stop signal from buddy!')
-                # Set the gameplay FSM to idle
-                self.mainFSM = 'idle'
-                # Stop iRob maneuv3r
-                self.irobSendCmd('stop')
+        elif msg.data == 'Emer':
+            self.get_logger().warning('Received emergency stop signal from buddy!')
+            # Set the gameplay FSM to idle
+            self.mainFSM = 'idle'
+            # Stop iRob maneuv3r
+            self.irobSendCmd('stop')
             
-            case _:
-                return
-                
-        return
+        else:
+            return
+ 
 
     def msg_InquireBuddyBallStatus(self):
         self.msg_selfToBuddy('PossesState')
@@ -331,19 +329,16 @@ class abugameplay(Node):
         
     # Start and Stop button callback
     def ssCallback(self, msg):
-        match msg.data:
-            case 'start':
-                self.get_logger().info('Starting Cartographer ROS')
-                # Start cartographer 
-                self.carto_startNode()
-            
-            case 'stop':
-                self.get_logger().info('Stopping Cartographer ROS')
-                # Kill cartographer
-                self.carto_killNode()
-                
-            case _:
-                return
+        if msg.data == 'start':
+            self.get_logger().info('Starting Cartographer ROS')
+            # Start cartographer 
+            self.carto_startNode()
+        elif msg.data == 'stop':
+            self.get_logger().info('Stopping Cartographer ROS')
+            # Kill cartographer
+            self.carto_killNode()
+        else:
+            return
     
     # Joystick callback
     def joyCallback(self, msg):
@@ -505,48 +500,47 @@ class abugameplay(Node):
            
     # Gameplay statemachine       
     def abu_gameplayFSM(self):
-        match self.mainFSM:
-            case 'idle': # Start case
-                if self.selfBallPosession is True:
-                    self.mainFSM = 'shootBall'
-                else:
-                    self.mainFSM = 'waitBall'
+        if self.mainFSM == 'idle':
+            if self.selfBallPosession is True:
+                self.mainFSM = 'shootBall'
+            else:
+                self.mainFSM = 'waitBall'
+        
+        elif self.main == 'shootBall':
+            if self.key == 'r':
+                self.calculate_shootGoal()
                 
-            case 'shootBall': # Shoot ball mode
-                if self.key == 'r':
-                    self.calculate_shootGoal()
-                    
-                elif self.key == 'p':
-                    self.calculate_passGoal()
-                    self.msg_selfToBuddy('BallPass')
+            elif self.key == 'p':
+                self.calculate_passGoal()
+                self.msg_selfToBuddy('BallPass')
+            
+            elif self.key == 's': # simulate shooting out the ball
+                self.selfBallPosession = False
+            
+            if self.selfBallPosession is False:
+                self.mainFSM = 'waitBall'
+            
+            return
+        
+        elif self.main == 'waitBall':
+            # If received the ball pass flag, rotates the ball receiver toward the buddy robot.
+            if self.receiveBallCmdFlag is True:
+                self.receiveBallFlag = False
+                # self.calculate_passOrient()
+            
+            if self.key == 'b':
+                if self.buddyBallPossesion is False:
+                    self.selfBallPosession = True
+            
+            # Check self ball possesion set by detection sensor
+            if self.selfBallPosession is True:
+                self.msg_selfToBuddy('BallReceived')
+                self.mainFSM = 'shootBall'
                 
-                elif self.key == 's': # simulate shooting out the ball
-                    self.selfBallPosession = False
-                
-                if self.selfBallPosession is False:
-                    self.mainFSM = 'waitBall'
-                
-                return
-                
-            case 'waitBall': # Wait ball mode
-                # If received the ball pass flag, rotates the ball receiver toward the buddy robot.
-                if self.receiveBallCmdFlag is True:
-                    self.receiveBallFlag = False
-                    # self.calculate_passOrient()
-                
-                if self.key == 'b':
-                    if self.buddyBallPossesion is False:
-                        self.selfBallPosession = True
-                
-                # Check self ball possesion set by detection sensor
-                if self.selfBallPosession is True:
-                    self.msg_selfToBuddy('BallReceived')
-                    self.mainFSM = 'shootBall'
-                    
-                return
-                
-            case _:
-                self.mainFSM = 'idle'
+            return
+        
+        else:
+            self.mainFSM = 'idle'
 
     def timer_callback(self):
         self.draw_hoopMarker()
