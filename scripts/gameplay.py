@@ -20,32 +20,20 @@ import tf2_geometry_msgs
 from rclpy.node import Node
 
 from std_msgs.msg import String
-from geometry_msgs.msg import PoseStamped, TransformStamped
+from geometry_msgs.msg import PoseStamped, TransformStamped, Twist
+from sensor_msgs.msg import Joy
 from visualization_msgs.msg import Marker
 from irob_msgs.msg import IrobCmdMsg
 
-import serial # pyserial
-
 settings = termios.tcgetattr(sys.stdin)
-
-JOY_DATA_LEN = 0 # Joy data length
 
 class abugameplay(Node):
     def __init__(self):
         super().__init__('abu2025_gameplay')
 
-        try:
-            self.arduinoSerial = serial.Serial(port='/dev/espjoy', baudrate=115200, timeout=0.025)
-
-        except(
-            serial.SerialException
-        ):
-            self.get_logger().error('Can\'t access ESP32 Joy serial port!')
-            # signal.raise_signal( signal.SIGINT )
-
         # FSM
         self.mainFSM = 'idle'
-        # Emergency button pressed flag
+        # Physical Emergency button pressed flag
         self.emerFlag = False
         
         # Key press (temporary)
@@ -66,6 +54,9 @@ class abugameplay(Node):
         self.tf_buffer_self = tf2_ros.Buffer(cache_time=rclpy.duration.Duration(seconds=1.0))
         self.tf_listener_self = tf2_ros.TransformListener(self.tf_buffer_self, self)
         self.selfPose = TransformStamped()
+        self.selfOrientation = 0.0
+        self.localizationLostFlag = False
+        
         
         # buddy Transform Listener
         self.tf_buffer_buddy = tf2_ros.Buffer(cache_time=rclpy.duration.Duration(seconds=1.5))
@@ -107,6 +98,14 @@ class abugameplay(Node):
         # Start and Stop topic
         self.ssSub_ = self.create_subscription(String, '/start_stop', self.ssCallback, 10)
         
+        # (Joy) Manual control
+        # Cmd vel publisher (to the twist_mux)
+        self.manualVelPub_ = self.create_publisher(Twist, 'cmd_vel_manual', 10)
+        # Sub to abu_joyInterface node
+        self.joySub_ = self.create_subscription(Joy, 'joy', self.joyCallback, 10)
+        self.fieldOriented = False
+        
+        # rViz markers
         # Hoop pose
         self.hoopPose = PoseStamped()
         self.hoopPose.pose.position.x = 13.0
@@ -128,7 +127,7 @@ class abugameplay(Node):
 
     # Listen for self transform map --> rX_base_link
     def tf_selfListener(self):
-        if not self.tf_buffer_self.can_transform("map", self.self_robot_frame, rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.5)):
+        if not self.tf_buffer_self.can_transform("map", self.self_robot_frame, rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.1)):
             self.get_logger().warning('Can\'t get self robot transform right now...')
             return 1
             
@@ -137,8 +136,15 @@ class abugameplay(Node):
                  "map",
                  self.self_robot_frame,
                  rclpy.time.Time(),
-                 timeout=rclpy.duration.Duration(seconds=0.5)
+                 timeout=rclpy.duration.Duration(seconds=0.1)
                 )
+            
+            self.selfOrientation = self.quat_to_yaw(
+                                self.selfPose.transform.rotation.x,
+                                self.selfPose.transform.rotation.y,
+                                self.selfPose.transform.rotation.z,
+                                self.selfPose.transform.rotation.w
+                                )
             
        	except(
             tf2_ros.LookupException,
@@ -338,7 +344,44 @@ class abugameplay(Node):
                 
             case _:
                 return
+    
+    # Joystick callback
+    def joyCallback(self, msg):
+        cmd_twst = Twist()
+
+        # Check M1 and M2 button to set/reset the field oriented mode
+        if msg.buttons[0] is True:
+            self.fieldOriented = True
+        elif msg.button[1] is True:
+            self.fieldOriented = False
+            
+        # Goto shoot pose
+        if msg.button[6] is True:
+            self.calculate_shootGoal()
+        elif msg.button[7] is True:    
+            # Set the gameplay FSM to idle
+            self.mainFSM = 'idle'
+            # Stop iRob maneuv3r
+            self.irobSendCmd('stop')
         
+        vel_magnitude = math.sqrt(pow(msg.axes[0]) + pow(msg.axes[1]))
+        vel_heading = math.atan2(msg.axes[1], msg.axes[0])
+        
+        if (abs(vel_magnitude) > 0.1) or (abs(msg.axes[3]) > 0.1):
+            # Set the gameplay FSM to idle
+            self.mainFSM = 'idle'
+            # Stop iRob maneuv3r
+            self.irobSendCmd('stop')
+        
+        if (self.localizationLostFlag == True) and (self.fieldOriented == True):
+            self.fieldOriented = False
+        
+        cmd_twist.linear.x = vel_magnitude * math.cos((vel_heading - self.selfOrientation) if self.fieldOriented  else vel_heading)
+        cmd_twist.linear.y = vel_magnitude * math.sin((vel_heading - self.selfOrientation) if self.fieldOriented  else vel_heading)  
+        cmd_twist.angular.z = 2 * msg.axes[3]
+    
+        self.manualVelPub_.publish(cmd_twist)
+    
     # Calculate shoot goal pose
     def calculate_shootGoal(self):
         self.get_logger().info('Calculating shoot pose...')
@@ -507,37 +550,33 @@ class abugameplay(Node):
 
     def timer_callback(self):
         self.draw_hoopMarker()
-        self.key = getKey()
+        # self.key = getKey()
 
-        if self.key == 'c':
-            rclpy.shutdown()
+        # if self.key == 'c':
+            # rclpy.shutdown()
 
-        if self.tf_selfListener() or self.tf_buddyListener():
-            self.get_logger().warning('Lookup transform error, will skip this cycle...')
+        if self.tf_selfListener():
+            self.localizationLostFlag = True
+            self.get_logger().warning('Self Lookup transform error, will skip this cycle...')
             return
+        else:
+            if self.localizationLostFlag == True:
+                self.localizationLostFlag = False
+                
+        if self.tf_buddyListener():
+            self.get_logger().warning('Buddy Lookup transform error')
+        # if self.key == 'h':
+            # self.calculate_homeGoal()
+        # elif self.key == 'g':
+            # self.msg_selfToBuddy('PossesState')
 
-        if self.key == 'h':
-            self.calculate_homeGoal()
-        elif self.key == 'g':
-            self.msg_selfToBuddy('PossesState')
+        # if self.emerFlag is True:
+            # return
 
-        if self.emerFlag is True:
-            return
-
-        self.abu_gameplayFSM()
+        # self.abu_gameplayFSM()
         self.draw_possesionMarker()
         
         return
-
-    # def serial_callback(self):
-        # global JOY_DATA_LEN
-        # raw_bytes = self.arduinoSerial.read(JOY_DATA_LEN)
-        
-        # Check if we found the header
-        # if str(raw_bytes[0:2].decode()) == 'rb':
-            # self.get_logger().info('Received new joy data')
-        # else:
-            # return
         
 
 def getKey():
