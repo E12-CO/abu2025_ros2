@@ -25,7 +25,7 @@ from sensor_msgs.msg import Joy
 from visualization_msgs.msg import Marker
 from irob_msgs.msg import IrobCmdMsg
 
-settings = termios.tcgetattr(sys.stdin)
+#settings = termios.tcgetattr(sys.stdin)
 
 class abugameplay(Node):
     def __init__(self):
@@ -573,13 +573,13 @@ class abugameplay(Node):
         return
         
 
-def getKey():
-    tty.setraw(sys.stdin.fileno())
-    key = ''
-    if select.select([sys.stdin], [], [], 0.05) == ([sys.stdin], [], []):
-        key = sys.stdin.read(1)
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-    return key
+# def getKey():
+    # tty.setraw(sys.stdin.fileno())
+    # key = ''
+    # if select.select([sys.stdin], [], [], 0.05) == ([sys.stdin], [], []):
+        # key = sys.stdin.read(1)
+    # termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    # return key
 
 def main(args=None):
     rclpy.init(args=args)
