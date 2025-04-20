@@ -91,6 +91,6 @@ def generate_launch_description():
         irob_interface_instant,
         irob_controller_instant,
         hokuyo_front_instant,
-        hokuyo_back_instant,
+        rplidar_back_instant,
         gameplay_instant
     ])
