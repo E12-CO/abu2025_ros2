@@ -225,18 +225,18 @@ class abu_joy_if : public rclcpp::Node{
 		joyMsg.axes[3] = (float)recvControllerData_t.stickByte.stickRY / 128;
 		
 		// Move buttons
-		joyMsg.buttons[0] = recvControllerData_t.moveBtnBit.move1;
-		joyMsg.buttons[1] = recvControllerData_t.moveBtnBit.move2;
-		joyMsg.buttons[2] = recvControllerData_t.moveBtnBit.move3;
-		joyMsg.buttons[3] = recvControllerData_t.moveBtnBit.move4;
+		joyMsg.buttons[0] = !recvControllerData_t.moveBtnBit.move1;
+		joyMsg.buttons[1] = !recvControllerData_t.moveBtnBit.move2;
+		joyMsg.buttons[2] = !recvControllerData_t.moveBtnBit.move3;
+		joyMsg.buttons[3] = !recvControllerData_t.moveBtnBit.move4;
 		// Set buttons
-		joyMsg.buttons[4] = recvControllerData_t.moveBtnBit.set1;
-		joyMsg.buttons[5] = recvControllerData_t.moveBtnBit.set2;
+		joyMsg.buttons[4] = !recvControllerData_t.moveBtnBit.set1;
+		joyMsg.buttons[5] = !recvControllerData_t.moveBtnBit.set2;
 		// Attack buttons
-		joyMsg.buttons[6] = recvControllerData_t.attackBtnBit.attack1;
-		joyMsg.buttons[7] = recvControllerData_t.attackBtnBit.attack2;
-		joyMsg.buttons[8] = recvControllerData_t.attackBtnBit.attack3;
-		joyMsg.buttons[9] = recvControllerData_t.attackBtnBit.attack4;
+		joyMsg.buttons[6] = !recvControllerData_t.attackBtnBit.attack1;
+		joyMsg.buttons[7] = !recvControllerData_t.attackBtnBit.attack2;
+		joyMsg.buttons[8] = !recvControllerData_t.attackBtnBit.attack3;
+		joyMsg.buttons[9] = !recvControllerData_t.attackBtnBit.attack4;
 		
 		pubJoy->publish(joyMsg);
 	}
