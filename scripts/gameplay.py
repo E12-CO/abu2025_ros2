@@ -361,9 +361,13 @@ class abugameplay(Node):
         #print(msg)
         # Check M1
         if bool(msg.buttons[0]) is True:
-            self.fieldOriented = True
+            if self.fieldOriented == False:
+                self.get_logger().info('Field oriented ON!')
+                self.fieldOriented = True
         else:
-            self.fieldOriented = False
+            if self.fieldOriented == True:
+                self.get_logger().info('Field oriented OFF!')
+                self.fieldOriented = False
             
         # Goto shoot pose
         # self.get_logger().info(f"Button[0] state: {msg}")
@@ -384,10 +388,12 @@ class abugameplay(Node):
         vel_heading = math.atan2(msg.axes[1], msg.axes[0])
         
         if (abs(vel_magnitude) > 0.1) or (abs(msg.axes[3]) > 0.1):
-            # Set the gameplay FSM to idle
-            self.mainFSM = 'idle'
-            # Stop iRob maneuv3r
-            self.irobSendCmd('stop')
+            if self.toggleLockShootGoal == True:
+                self.toggleLockShootGoal = False
+                # Set the gameplay FSM to idle
+                self.mainFSM = 'idle'
+                # Stop iRob maneuv3r
+                self.irobSendCmd('stop')
         
         if (self.localizationLostFlag == True) and (self.fieldOriented == True):
             self.fieldOriented = False
