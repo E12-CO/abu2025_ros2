@@ -107,6 +107,7 @@ class abugameplay(Node):
         # Sub to abu_joyInterface node
         self.joySub_ = self.create_subscription(Joy, 'joy', self.joyCallback, 10)
         self.fieldOriented = False
+        self.toggleLockShootGoal = False
         
         # rViz markers
         # Hoop pose
@@ -358,21 +359,26 @@ class abugameplay(Node):
         cmd_twist = Twist()
         #self.get_logger().info(f"Button[0] state: {msg.buttons[0]}")
         #print(msg)
-        # Check M1 and M2 button to set/reset the field oriented mode
+        # Check M1
         if bool(msg.buttons[0]) is True:
             self.fieldOriented = True
-        elif bool(msg.buttons[1]) is True:
+        else:
             self.fieldOriented = False
             
         # Goto shoot pose
-        self.get_logger().info(f"Button[0] state: {msg}")
-        if (bool(msg.buttons[6])) == True:
-            self.calculate_shootGoal()
-        elif bool(msg.buttons[7]) == True:    
-            # Set the gameplay FSM to idle
-            self.mainFSM = 'idle'
-            # Stop iRob maneuv3r
-            self.irobSendCmd('stop')
+        # self.get_logger().info(f"Button[0] state: {msg}")
+        if (bool(msg.buttons[6])) is True:
+            if self.toggleLockShootGoal == False:
+                self.toggleLockShootGoal = True
+                self.calculate_shootGoal()
+            
+        else:    
+            if self.toggleLockShootGoal == True:
+                self.toggleLockShootGoal = False
+                # Set the gameplay FSM to idle
+                self.mainFSM = 'idle'
+                # Stop iRob maneuv3r
+                self.irobSendCmd('stop')
         
         vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2)
         vel_heading = math.atan2(msg.axes[1], msg.axes[0])
