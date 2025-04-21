@@ -97,6 +97,7 @@ class abugameplay(Node):
         
         # Start and Stop topic
         self.ssSub_ = self.create_subscription(String, '/start_stop', self.ssCallback, 10)
+        self.cartoStarted = False
         
         # (Joy) Manual control
         # Cmd vel publisher (to the twist_mux)
@@ -330,13 +331,23 @@ class abugameplay(Node):
     # Start and Stop button callback
     def ssCallback(self, msg):
         if msg.data == 'start':
+            if self.cartoStarted == True:
+                return
+            self.cartoStarted = True
+            
             self.get_logger().info('Starting Cartographer ROS')
             # Start cartographer 
             self.carto_startNode()
+            
         elif msg.data == 'stop':
+            if self.cartoStarted == False:
+                return
+            self.cartoStarted = False
+            
             self.get_logger().info('Stopping Cartographer ROS')
             # Kill cartographer
             self.carto_killNode()
+            
         else:
             return
     
