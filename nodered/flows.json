@@ -351,7 +351,7 @@
         "order": 1,
         "width": "19",
         "height": "10",
-        "format": "<div class=\"image-container\">\n    <div class=\"error-txt\">{{msg.errmsg}}</div>\n    <img src=\"/img/ABU2025_field.jpg\" alt=\"ABU Robocon 2025 Field\" width=\"750\" height=\"400\" class=\"map-img\">\n    <img src=\"/img/robotclub.jpeg\" alt=\"Robot Colub Engineering KMITL Logo\" width=\"100\" height=\"100\" class=\"rbc-img\">\n    <img src=\"/img/WE_red_logo.png\" alt=\"Wurth Electronics Logo\" width=\"100\" height=\"100\" class=\"we-img\">\n    <div class=\"r1-baselink\" style=\"bottom: {{msg.bottomR1}}px; right: {{msg.rightR1}}px; transform: rotate({{msg.rotR1}}deg);\"> R1 </div>\n    <div class=\"r2-baselink\" style=\"bottom: {{msg.bottomR2}}px; right: {{msg.rightR2}}px; transform: rotate({{msg.rotR2}}deg);\"> R2 </div>\n    <div class=\"error-txt\">{{msg.errmsg}}</div>\n</div>\n\n<style>\n    .image-container {\n        display: flex;\n        justify-content: center;\n        width: 750;\n        height: 400;\n    }\n\n    .map-img {\n        object-fit: contain;\n    }\n\n    .error-txt{\n        position: absolute;\n        display: flex;  /* Center text vertically and horizontally */\n        align-items: center; \n        justify-content: center;\n        text-align: center;\n        top: 0px;\n        left: 10px;\n        color: red;\n        font-size: 30px;\n    }\n\n    .rbc-img {\n        position: absolute;\n        top: 150px;\n        left: 230px;\n    }\n\n    .we-img{\n        position: absolute;\n        top: 150px;\n        left: 430px;\n    }\n\n    .r1-baselink {\n      position: absolute;\n      width: 38px; /* Square width */\n      height: 38px; /* Square height */\n      border-radius: 50%;\n      background-color: rgba(0, 255, 0, 0.5); /* Red with 50% transparency */\n      border: 1px solid black; /* Optional border */\n      color: white;  /* Text color */\n      font-size: 16px; /* Text size */\n      font-weight: bold;\n      display: flex;  /* Center text vertically and horizontally */\n      align-items: center; \n      justify-content: center;\n      text-align: center;\n    }\n\n    .r2-baselink {\n      position: absolute;\n      width: 38px; /* Square width */\n      height: 38px; /* Square height */\n      border-radius: 50%;\n      background-color: rgba(255, 0, 0, 0.5); /* Green with 50% transparency */\n      border: 1px solid black; /* Optional border */\n      color: white;  /* Text color */\n      font-size: 16px; /* Text size */\n      font-weight: bold;\n      display: flex;  /* Center text vertically and horizontally */\n      align-items: center; \n      justify-content: center;\n      text-align: center;\n    }\n\n</style>",
+        "format": "<div class=\"image-container\">\n    <div class=\"error-txt\">{{msg.errmsg}}</div>\n    <img src=\"/img/ABU2025_field.jpg\" alt=\"ABU Robocon 2025 Field\" width=\"750\" height=\"400\" class=\"map-img\">\n    <img src=\"/img/robotclub.jpeg\" alt=\"Robot Colub Engineering KMITL Logo\" width=\"100\" height=\"100\" class=\"rbc-img\">\n    <img src=\"/img/WE_red_logo.png\" alt=\"Wurth Electronics Logo\" width=\"100\" height=\"100\" class=\"we-img\">\n    <div class=\"r1-baselink\" style=\"bottom: {{msg.bottomR1}}px; right: {{msg.rightR1}}px; transform: rotate({{msg.rotR1}}deg);\"> R1 </div>\n    <div class=\"r2-baselink\" style=\"bottom: {{msg.bottomR2}}px; right: {{msg.rightR2}}px; transform: rotate({{msg.rotR2}}deg);\"> R2 </div>\n</div>\n\n<style>\n    .image-container {\n        display: flex;\n        justify-content: center;\n        width: 750;\n        height: 400;\n    }\n\n    .map-img {\n        object-fit: contain;\n    }\n\n    .error-txt{\n        position: absolute;\n        display: flex;  /* Center text vertically and horizontally */\n        align-items: center; \n        justify-content: center;\n        text-align: center;\n        top: 0px;\n        left: 10px;\n        color: red;\n        font-size: 30px;\n    }\n\n    .rbc-img {\n        position: absolute;\n        top: 150px;\n        left: 230px;\n    }\n\n    .we-img{\n        position: absolute;\n        top: 150px;\n        left: 430px;\n    }\n\n    .r1-baselink {\n      position: absolute;\n      width: 38px; /* Square width */\n      height: 38px; /* Square height */\n      border-radius: 50%;\n      background-color: rgba(0, 255, 0, 0.5); /* Red with 50% transparency */\n      border: 1px solid black; /* Optional border */\n      color: white;  /* Text color */\n      font-size: 16px; /* Text size */\n      font-weight: bold;\n      display: flex;  /* Center text vertically and horizontally */\n      align-items: center; \n      justify-content: center;\n      text-align: center;\n    }\n\n    .r2-baselink {\n      position: absolute;\n      width: 38px; /* Square width */\n      height: 38px; /* Square height */\n      border-radius: 50%;\n      background-color: rgba(255, 0, 0, 0.5); /* Green with 50% transparency */\n      border: 1px solid black; /* Optional border */\n      color: white;  /* Text color */\n      font-size: 16px; /* Text size */\n      font-weight: bold;\n      display: flex;  /* Center text vertically and horizontally */\n      align-items: center; \n      justify-content: center;\n      text-align: center;\n    }\n\n</style>",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
@@ -409,8 +409,8 @@
         "winHide": false,
         "oldrc": false,
         "name": "List node",
-        "x": 1080,
-        "y": 400,
+        "x": 1100,
+        "y": 500,
         "wires": [
             [
                 "9aead1507d1ef413",
@@ -432,8 +432,8 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1280,
-        "y": 380,
+        "x": 1300,
+        "y": 480,
         "wires": []
     },
     {
@@ -442,8 +442,8 @@
         "z": "7917b3a101f23877",
         "name": "Node list (activity check)",
         "info": "",
-        "x": 950,
-        "y": 320,
+        "x": 970,
+        "y": 420,
         "wires": []
     },
     {
@@ -463,8 +463,8 @@
         "font": "",
         "fontSize": 16,
         "color": "#000000",
-        "x": 1300,
-        "y": 420,
+        "x": 1320,
+        "y": 520,
         "wires": []
     },
     {
@@ -478,8 +478,8 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "x": 860,
-        "y": 400,
+        "x": 880,
+        "y": 500,
         "wires": [
             [
                 "36288f89ba5ae7c3"
@@ -540,7 +540,8 @@
         "y": 120,
         "wires": [
             [
-                "fb7602b6036586c2"
+                "fb7602b6036586c2",
+                "483062bd423654ff"
             ]
         ]
     },
@@ -562,7 +563,8 @@
         "wires": [
             [
                 "ab7cce05d71d2a5b",
-                "977eee6e25f23fbe"
+                "977eee6e25f23fbe",
+                "611229dccff7b8f8"
             ]
         ]
     },
@@ -830,11 +832,11 @@
             "fb7602b6036586c2"
         ],
         "uncaught": false,
-        "x": 1100,
-        "y": 200,
+        "x": 880,
+        "y": 380,
         "wires": [
             [
-                "483062bd423654ff"
+                "3daa7f3ed04a151c"
             ]
         ]
     },
@@ -842,19 +844,20 @@
         "id": "483062bd423654ff",
         "type": "function",
         "z": "7917b3a101f23877",
-        "name": "function 1",
-        "func": "if (msg.error.message){\n    msg.errmsg = msg.error.message;\n}else{\n    msg.errmsg = \"\";\n}\n\n\nreturn msg;",
+        "name": "Connection status",
+        "func": "var connection_state = flow.get(\"tcp_map_connected\");\n\nif (connection_state){\n    msg.errmsg = \"Map system conncted!\";\n}else{\n    msg.errmsg = \"Map system disconnected!\";\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1300,
+        "x": 1330,
         "y": 200,
         "wires": [
             [
-                "c9907f269b2a4fb7"
+                "c9907f269b2a4fb7",
+                "2fd7a2a344d2ffde"
             ]
         ]
     },
@@ -862,7 +865,7 @@
         "id": "2e32f3b9e823eb32",
         "type": "exec",
         "z": "7917b3a101f23877",
-        "command": "ros2 topic pub -1 /soft_emergency std_msgs/String 'data: stop' ",
+        "command": "ros2 topic pub -t 5 /soft_emergency std_msgs/String 'data: stop' -w 0 ",
         "addpay": "",
         "append": "",
         "useSpawn": "false",
@@ -882,9 +885,9 @@
         "id": "de75d018c373c757",
         "type": "exec",
         "z": "7917b3a101f23877",
-        "command": "ros2 topic pub -1 /playmode std_msgs/String 'data: ",
+        "command": "ros2 topic pub -t 10 /playmode std_msgs/String 'data: ",
         "addpay": "payload",
-        "append": "'",
+        "append": "' -w 0",
         "useSpawn": "false",
         "timer": "",
         "winHide": false,
@@ -916,7 +919,7 @@
         "z": "7917b3a101f23877",
         "command": "ros2 topic pub /start_stop std_msgs/msg/String \"data: ",
         "addpay": "payload",
-        "append": "\" -1",
+        "append": "\" -1 -w 0",
         "useSpawn": "false",
         "timer": "",
         "winHide": false,
@@ -964,7 +967,7 @@
         "id": "5cdce704c9a0fb88",
         "type": "exec",
         "z": "7917b3a101f23877",
-        "command": "python3 /home/pi/abu2025_ws/install/abu2025_ros2/lib/abu2025_ros2/socketABU_Pose.py",
+        "command": "python3 /home/tinlethax/abu2025_ws/install/abu2025_ros2/lib/abu2025_ros2/socketABU_Pose.py",
         "addpay": "",
         "append": "",
         "useSpawn": "false",
@@ -977,6 +980,73 @@
         "wires": [
             [],
             [],
+            []
+        ]
+    },
+    {
+        "id": "2fd7a2a344d2ffde",
+        "type": "debug",
+        "z": "7917b3a101f23877",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1740,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "3daa7f3ed04a151c",
+        "type": "change",
+        "z": "7917b3a101f23877",
+        "name": "not connected",
+        "rules": [
+            {
+                "t": "set",
+                "p": "tcp_map_connected",
+                "pt": "flow",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1100,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "611229dccff7b8f8",
+        "type": "change",
+        "z": "7917b3a101f23877",
+        "name": "connected",
+        "rules": [
+            {
+                "t": "set",
+                "p": "tcp_map_connected",
+                "pt": "flow",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1090,
+        "y": 320,
+        "wires": [
             []
         ]
     }
