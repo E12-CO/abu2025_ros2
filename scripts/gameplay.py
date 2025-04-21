@@ -15,6 +15,8 @@ import os, signal, sys, select, termios, tty
 
 import transforms3d
 import rclpy
+from rclpy.qos import QoSProfile
+from rclpy.qos import QoSReliabilityPolicy
 import tf2_ros
 import tf2_geometry_msgs
 from rclpy.node import Node
@@ -93,10 +95,10 @@ class abugameplay(Node):
         # note that the topic name is absolute path with /, indication that it's overriding the namespace.
         
         # Emergency soft-stop topic 
-        self.emerSub_ = self.create_subscription(String, '/soft_emergency', self.softEmerCallback, 10)
+        self.emerSub_ = self.create_subscription(String, '/soft_emergency', self.softEmerCallback, QoSProfile(depth=10, reliability=QoSReliabilityPolicy.BEST_EFFORT))
         
         # Start and Stop topic
-        self.ssSub_ = self.create_subscription(String, '/start_stop', self.ssCallback, 10)
+        self.ssSub_ = self.create_subscription(String, '/start_stop', self.ssCallback, QoSProfile(depth=10, reliability=QoSReliabilityPolicy.BEST_EFFORT))
         self.cartoStarted = False
         
         # (Joy) Manual control
@@ -129,7 +131,7 @@ class abugameplay(Node):
     # Listen for self transform map --> rX_base_link
     def tf_selfListener(self):
         if not self.tf_buffer_self.can_transform("map", self.self_robot_frame, rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.1)):
-            self.get_logger().warning('Can\'t get self robot transform right now...')
+            #self.get_logger().warning('Can\'t get self robot transform right now...')
             return 1
             
         try:
@@ -152,7 +154,7 @@ class abugameplay(Node):
             tf2_ros.ConnectivityException,
             tf2_ros.ExtrapolationException,
         ):
-            self.get_logger().warning('Self Transform Lookup failed!, Check Cartographer node!')
+            #self.get_logger().warning('Self Transform Lookup failed!, Check Cartographer node!')
             return 1
         
         return 0
@@ -160,7 +162,7 @@ class abugameplay(Node):
     # Listen for buddy transform map --> rX_base_link
     def tf_buddyListener(self):    
         if not self.tf_buffer_buddy.can_transform("map", self.buddy_robot_frame, rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.5)):
-            self.get_logger().warning('Can\'t get buddy robot transform right now...')
+            #self.get_logger().warning('Can\'t get buddy robot transform right now...')
             return 1
             
         try:
@@ -176,7 +178,7 @@ class abugameplay(Node):
             tf2_ros.ConnectivityException,
             tf2_ros.ExtrapolationException,
         ):
-            self.get_logger().warning('Buddy Transform Lookup failed!, Check Cartographer node!')
+            #self.get_logger().warning('Buddy Transform Lookup failed!, Check Cartographer node!')
             return 1
         
         return 0
@@ -562,14 +564,14 @@ class abugameplay(Node):
 
         if self.tf_selfListener():
             self.localizationLostFlag = True
-            self.get_logger().warning('Self Lookup transform error, will skip this cycle...')
+            #self.get_logger().warning('Self Lookup transform error, will skip this cycle...')
             return
         else:
             if self.localizationLostFlag == True:
                 self.localizationLostFlag = False
                 
-        if self.tf_buddyListener():
-            self.get_logger().warning('Buddy Lookup transform error')
+        #if self.tf_buddyListener():
+            #self.get_logger().warning('Buddy Lookup transform error')
         # if self.key == 'h':
             # self.calculate_homeGoal()
         # elif self.key == 'g':
