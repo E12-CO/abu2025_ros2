@@ -355,24 +355,26 @@ class abugameplay(Node):
     
     # Joystick callback
     def joyCallback(self, msg):
-        cmd_twst = Twist()
-
+        cmd_twist = Twist()
+        #self.get_logger().info(f"Button[0] state: {msg.buttons[0]}")
+        #print(msg)
         # Check M1 and M2 button to set/reset the field oriented mode
-        if msg.buttons[0] is True:
+        if bool(msg.buttons[0]) is True:
             self.fieldOriented = True
-        elif msg.button[1] is True:
+        elif bool(msg.buttons[1]) is True:
             self.fieldOriented = False
             
         # Goto shoot pose
-        if msg.button[6] is True:
+        self.get_logger().info(f"Button[0] state: {msg}")
+        if (bool(msg.buttons[6])) == True:
             self.calculate_shootGoal()
-        elif msg.button[7] is True:    
+        elif bool(msg.buttons[7]) == True:    
             # Set the gameplay FSM to idle
             self.mainFSM = 'idle'
             # Stop iRob maneuv3r
             self.irobSendCmd('stop')
         
-        vel_magnitude = math.sqrt(pow(msg.axes[0]) + pow(msg.axes[1]))
+        vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2)
         vel_heading = math.atan2(msg.axes[1], msg.axes[0])
         
         if (abs(vel_magnitude) > 0.1) or (abs(msg.axes[3]) > 0.1):
