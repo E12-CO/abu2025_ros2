@@ -46,8 +46,16 @@ def generate_launch_description():
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_iRob_controller.yaml')]
     )
+    
+    # ABU Joy node
+    abujoy_instant = launch_ros.actions.Node(
+        package=pkg_name,
+        executable='abu_joyInterface',
+        namespace='r1',
+        output='screen'
+    )
 
-    # Hokuyo UST laser scanners
+    # RPLidar C1 laser scanner
     rplidar_back_instant = launch_ros.actions.Node(
         package='sllidar_ros2',
         executable='sllidar_node',
@@ -64,6 +72,7 @@ def generate_launch_description():
                      'scan_mode': 'Standard'}]
     )
 
+    # Hokuyo UST laser scanner
     hokuyo_front_instant = launch_ros.actions.Node(
         package='ust_05ln_ros2',
         executable='urg_node',
@@ -71,6 +80,15 @@ def generate_launch_description():
         namespace='r1',
         output='screen',
         parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_ust08_front.yaml')]
+    )
+
+    # iRob maneuv3r
+    irob_maneuv3r_instant = launch_ros.actions.Node(
+        package='irob_maneuv3r',
+        executable='iRob_maneuv3r',
+        namespace = 'r1',
+        output='screen',
+        parameters=[os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_iRob_maneuv3r.yaml')]
     )
 
     # Gameplay System
@@ -85,12 +103,33 @@ def generate_launch_description():
             {'buddy_robot_frame','base_link_r2'}
             ]
     )
+    
+    # twist mux
+    twistmux_instant = launch_ros.actions.Node(
+        package='twist_mux',
+        executable='twist_mux',
+        namespace='r1',
+        output='screen',
+        remappings=[
+            ('cmd_vel_out', 'cmd_vel'),
+            ('/diagnostics', 'diagnostics')
+            ],
+        parameters=[
+            os.path.join(get_package_share_directory(pkg_name), 'R1/params_r1', 'R1_twist_mux.yaml')
+            ]
+    )
+    
 
     return launch.LaunchDescription([
         node_robot_state_publisher,
+        
         irob_interface_instant,
         irob_controller_instant,
+        abujoy_instant,
         hokuyo_front_instant,
         rplidar_back_instant,
-        gameplay_instant
+        
+        irob_maneuv3r_instant,
+        gameplay_instant,
+        twistmux_instant,
     ])
