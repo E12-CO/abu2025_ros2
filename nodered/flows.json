@@ -481,9 +481,7 @@
         "x": 880,
         "y": 500,
         "wires": [
-            [
-                "36288f89ba5ae7c3"
-            ]
+            []
         ]
     },
     {
@@ -865,7 +863,7 @@
         "id": "2e32f3b9e823eb32",
         "type": "exec",
         "z": "7917b3a101f23877",
-        "command": "ros2 topic pub -t 5 /soft_emergency std_msgs/String 'data: stop' -w 0 ",
+        "command": "ros2 topic pub -t 5 /soft_emergency std_msgs/String 'data: stop' -w 0 --qos-reliability best_effort",
         "addpay": "",
         "append": "",
         "useSpawn": "false",
@@ -919,7 +917,7 @@
         "z": "7917b3a101f23877",
         "command": "ros2 topic pub /start_stop std_msgs/msg/String \"data: ",
         "addpay": "payload",
-        "append": "\" -1 -w 0",
+        "append": "\" -t 5 --qos-reliability best_effort -w 0",
         "useSpawn": "false",
         "timer": "",
         "winHide": false,
