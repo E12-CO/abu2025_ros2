@@ -397,12 +397,12 @@ class abugameplay(Node):
                 # Stop iRob maneuv3r
                 self.irobSendCmd('stop')
         '''
+        if (abs(vel_magnitude) > 0.05) or (abs(msg.axes[3]) > 0.1):
+            cmd_twist.linear.x = vel_magnitude * math.cos((vel_heading - self.selfOrientation) if self.fieldOriented  else vel_heading)
+            cmd_twist.linear.y = vel_magnitude * math.sin((vel_heading - self.selfOrientation) if self.fieldOriented  else vel_heading)  
+            cmd_twist.angular.z = 2 * msg.axes[3]
         
-        cmd_twist.linear.x = vel_magnitude * math.cos((vel_heading - self.selfOrientation) if self.fieldOriented  else vel_heading)
-        cmd_twist.linear.y = vel_magnitude * math.sin((vel_heading - self.selfOrientation) if self.fieldOriented  else vel_heading)  
-        cmd_twist.angular.z = 2 * msg.axes[3]
-    
-        self.manualVelPub_.publish(cmd_twist)
+            self.manualVelPub_.publish(cmd_twist)
     
     # Calculate shoot goal pose
     def calculate_shootGoal(self):
