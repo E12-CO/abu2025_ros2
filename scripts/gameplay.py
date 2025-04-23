@@ -59,7 +59,6 @@ class abugameplay(Node):
         self.selfOrientation = 0.0
         self.localizationLostFlag = False
         
-        
         # buddy Transform Listener
         self.tf_buffer_buddy = tf2_ros.Buffer(cache_time=rclpy.duration.Duration(seconds=1.5))
         self.tf_listener_buddy = tf2_ros.TransformListener(self.tf_buffer_buddy, self)
@@ -108,6 +107,14 @@ class abugameplay(Node):
         self.joySub_ = self.create_subscription(Joy, 'joy', self.joyCallback, 10)
         self.fieldOriented = False
         self.toggleLockShootGoal = False
+        
+        self.cmd_twist = Twist()
+        
+        self.vel_magnitude  = 0.0
+        self.vel_heading    = 0.0
+        self.vel_az         = 0.0
+        
+        self.s2h_prevError  = 0.0
         
         # rViz markers
         # Hoop pose
@@ -356,7 +363,6 @@ class abugameplay(Node):
     
     # Joystick callback
     def joyCallback(self, msg):
-        cmd_twist = Twist()
         #self.get_logger().info(f"Button[0] state: {msg.buttons[0]}")
         #print(msg)
         # Check M1
@@ -385,9 +391,9 @@ class abugameplay(Node):
                 # Stop iRob maneuv3r
                 self.irobSendCmd('stop')
         
-        vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2)
-        vel_heading = math.atan2(msg.axes[1], msg.axes[0])
-        
+        self.vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2)
+        self.vel_heading = math.atan2(msg.axes[1], msg.axes[0])
+        self.vel_az = msg.axes[3]
         '''
         if (abs(vel_magnitude) > 0.1) or (abs(msg.axes[3]) > 0.1):
             if self.toggleLockShootGoal == True:
@@ -397,12 +403,43 @@ class abugameplay(Node):
                 # Stop iRob maneuv3r
                 self.irobSendCmd('stop')
         '''
-        if (abs(vel_magnitude) > 0.05) or (abs(msg.axes[3]) > 0.1):
-            cmd_twist.linear.x = vel_magnitude * math.cos((vel_heading - self.selfOrientation) if self.fieldOriented  else vel_heading)
-            cmd_twist.linear.y = vel_magnitude * math.sin((vel_heading - self.selfOrientation) if self.fieldOriented  else vel_heading)  
-            cmd_twist.angular.z = 2 * msg.axes[3]
         
-            self.manualVelPub_.publish(cmd_twist)
+    
+    def joyRunner(self):
+        v_vector = (self.vel_heading - self.selfOrientation) if self.fieldOriented is True else self.vel_heading
+        
+        self.cmd_twist.linear.x = self.vel_magnitude * math.cos(v_vector)
+        self.cmd_twist.linear.y = self.vel_magnitude * math.sin(v_vector)  
+    
+        if self.toggleLockShootGoal is True:
+            # In the case of shoot goal lock mode, always send cmd_vel
+            self.cmd_twist.angular.z = self.calculate_shootOrientation()
+            self.manualVelPub_.publish(self.cmd_twist)
+            
+        else:
+            # In the case of ordinary control mode, send cmd only when sticks were moved.
+            if (abs(self.vel_magnitude) > 0.05) or (abs(msg.axes[3]) > 0.1):
+                self.cmd_twist.angular.z = 1.57 * self.vel_az
+                self.manualVelPub_.publish(self.cmd_twist)
+            else:
+                return
+    
+    # PD controller for shoot 
+    def calculate_shootOrientation(self):
+        # 1. Get current position with lookuptransform
+        # 2. Calculate the heading angle from the self to the hoop position, this will be used to command the robot orientation
+        self_to_hoop_angle = math.atan2(
+                (self.hoopPose.pose.position.y - self.selfPose.transform.translation.y),
+                (self.hoopPose.pose.position.x - self.selfPose.transform.translation.x)
+            )
+         
+        s2h_error = self_to_hoop_angle - self.selfOrientation
+    
+        s2h_velAz = (s2h_error * 2.3) + ((s2h_error - self.s2h_prevError) * 0.001)
+        
+        self.s2h_prevError = s2h_error
+        
+        return s2h_velAz
     
     # Calculate shoot goal pose
     def calculate_shootGoal(self):
@@ -494,7 +531,7 @@ class abugameplay(Node):
         elif self.selfNamespace == '/r2':
             # Home pose of R2 robot
             home_x = 0.0
-            home_y = -1.0
+            home_y = -2.0
         else:
             return
         
@@ -579,7 +616,7 @@ class abugameplay(Node):
         if self.tf_selfListener():
             self.localizationLostFlag = True
             #self.get_logger().warning('Self Lookup transform error, will skip this cycle...')
-            return
+            #return
         else:
             if self.localizationLostFlag == True:
                 self.localizationLostFlag = False
@@ -595,6 +632,7 @@ class abugameplay(Node):
             # return
 
         # self.abu_gameplayFSM()
+        self.joyRunner()
         self.draw_possesionMarker()
         
         return
