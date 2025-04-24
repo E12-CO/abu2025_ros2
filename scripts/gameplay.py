@@ -110,6 +110,9 @@ class abugameplay(Node):
         
         self.cmd_twist = Twist()
         
+        self.Vxy_max = 1.1 # Max linear velocity of 1.1m/s
+        self.Vz_max  = 1.57 # Max angular Z velocity of 1.57 rad/s (90 deg/s)
+        
         self.vel_magnitude  = 0.0
         self.vel_heading    = 0.0
         self.vel_az         = 0.0
@@ -363,28 +366,26 @@ class abugameplay(Node):
     
     # Joystick callback
     def joyCallback(self, msg):
-        #self.get_logger().info(f"Button[0] state: {msg.buttons[0]}")
-        #print(msg)
-        # Check M1
+    
+        # Check M1. Field oriented vs Robot oriented control
         if bool(msg.buttons[0]) is True:
-            if (self.localizationLostFlag == False) and (self.fieldOriented == False):
+            if (self.localizationLostFlag is False) and (self.fieldOriented is False):
                 self.get_logger().info('Field oriented ON!')
                 self.fieldOriented = True
                 
         else:
-            if self.fieldOriented == True:
+            if self.fieldOriented is True:
                 self.get_logger().info('Field oriented OFF!')
                 self.fieldOriented = False
             
-        # Goto shoot pose
-        # self.get_logger().info(f"Button[0] state: {msg}")
+        # Check A1. Active Hoop locking
         if (bool(msg.buttons[6])) is True:
-            if self.toggleLockShootGoal == False:
+            if (self.localizationLostFlag is False) and (self.toggleLockShootGoal is False):
                 self.toggleLockShootGoal = True
                 # self.calculate_shootGoal()
             
         else:    
-            if self.toggleLockShootGoal == True:
+            if self.toggleLockShootGoal is True:
                 self.toggleLockShootGoal = False
                 '''
                 # Set the gameplay FSM to idle
@@ -393,18 +394,9 @@ class abugameplay(Node):
                 self.irobSendCmd('stop')
                 '''
         
-        self.vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2)
+        self.vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2) * self.Vxy_max
         self.vel_heading = math.atan2(msg.axes[1], msg.axes[0])
         self.vel_az = msg.axes[3]
-        '''
-        if (abs(vel_magnitude) > 0.1) or (abs(msg.axes[3]) > 0.1):
-            if self.toggleLockShootGoal == True:
-                self.toggleLockShootGoal = False
-                # Set the gameplay FSM to idle
-                self.mainFSM = 'idle'
-                # Stop iRob maneuv3r
-                self.irobSendCmd('stop')
-        '''
         
     
     def joyRunner(self):
@@ -421,7 +413,7 @@ class abugameplay(Node):
         else:
             # In the case of ordinary control mode, send cmd only when sticks were moved.
             if (abs(self.vel_magnitude) > 0.05) or (abs(msg.axes[3]) > 0.1):
-                self.cmd_twist.angular.z = 1.57 * self.vel_az
+                self.cmd_twist.angular.z = self.Vz_max * self.vel_az
                 self.manualVelPub_.publish(self.cmd_twist)
             else:
                 return
