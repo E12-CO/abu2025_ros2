@@ -381,15 +381,17 @@ class abugameplay(Node):
         if (bool(msg.buttons[6])) is True:
             if self.toggleLockShootGoal == False:
                 self.toggleLockShootGoal = True
-                self.calculate_shootGoal()
+                # self.calculate_shootGoal()
             
         else:    
             if self.toggleLockShootGoal == True:
                 self.toggleLockShootGoal = False
+                '''
                 # Set the gameplay FSM to idle
                 self.mainFSM = 'idle'
                 # Stop iRob maneuv3r
                 self.irobSendCmd('stop')
+                '''
         
         self.vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2)
         self.vel_heading = math.atan2(msg.axes[1], msg.axes[0])
