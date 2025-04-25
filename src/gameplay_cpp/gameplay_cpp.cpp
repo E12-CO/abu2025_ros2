@@ -130,10 +130,14 @@ class gameplay_abu2025 : public rclcpp::Node{
 	
 	double v_vector;
 	
+	
+	double rotate_kp;
+	double rotate_kd;
 	double self_to_hoop_angle;
 	double s2h_error;
 	double s2h_velAz;
 	double s2h_prevError;
+	
 	
 	// Wall timer for PID control loop 50Hz
 	rclcpp::TimerBase::SharedPtr timer_;
@@ -153,6 +157,9 @@ class gameplay_abu2025 : public rclcpp::Node{
 		declare_parameter("hoop_position_x", 13.0);
 		declare_parameter("hoop_position_y", -3.0);
 		
+		declare_parameter("rotate_kp", 2.1);
+		declare_parameter("rotate_kd", 0.001);
+		
 		get_parameter("self_robot_frame", self_robot_frame);
 		get_parameter("buddy_robot_frame", buddy_robot_frame);
 		
@@ -163,6 +170,8 @@ class gameplay_abu2025 : public rclcpp::Node{
 		get_parameter("hoop_position_x", hoop_px);
 		get_parameter("hoop_position_y", hoop_py);
 		
+		get_parameter("rotate_kp", rotate_kp);
+		get_parameter("rotate_kd", rotate_kd);
 		
 		// Self and buddy listener
 		tf_buffer_self = 
@@ -513,8 +522,8 @@ class gameplay_abu2025 : public rclcpp::Node{
 		s2h_error = self_to_hoop_angle - selfOrientation;
 		
 		s2h_velAz = 
-			(s2h_error * 2.1) +
-			((s2h_error - s2h_prevError) * 0.001);
+			(s2h_error * rotate_kp) +
+			((s2h_error - s2h_prevError) * rotate_kd);
 		
 		s2h_prevError = s2h_error;
 		

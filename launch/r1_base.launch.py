@@ -105,7 +105,9 @@ def generate_launch_description():
             {'v_xy_max', '1.1'},
             {'v_az_max', '1.57'},
             {'hoop_position_x', '13.0'},
-            {'hoop_position_y', '-3.0'}
+            {'hoop_position_y', '-3.0'},
+            {'rotate_kp', '2.1'},
+            {'rotate_kd', '0.001'}
             ]
     )
     
