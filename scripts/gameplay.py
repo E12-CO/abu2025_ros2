@@ -127,8 +127,8 @@ class abugameplay(Node):
         self.hoopPose = PoseStamped()
         self.hoopPose.pose.position.x = 13.0
         self.hoopPose.pose.position.y = -3.0
-        # Shoot radius, 2 meters
-        self.shootRadius = 2.0 
+        # Shoot radius, 4.2 meters
+        self.shootRadius = 4.2 
 
         # Goal pose 
         self.goalPose = PoseStamped()
@@ -482,6 +482,13 @@ class abugameplay(Node):
         self.goalPose.pose.position.x = (self.shootRadius * math.cos(heading + 3.141593)) + self.hoopPose.pose.position.x
         self.goalPose.pose.position.y = (self.shootRadius * math.sin(heading + 3.141593)) + self.hoopPose.pose.position.y
         self.draw_shootMarker(self.goalPose.pose.position.x, self.goalPose.pose.position.y)
+        
+        # 3.5 limit the position not to collide with the gamefield
+        if self.goalPose.pose.position.y < 0.0:
+            self.goalPose.pose.position.y = 0.0
+        elif self.goalPose.pose.position.y > -6.0:
+            self.goalPose.pose.position.y = -6.0
+        
         # 4. The heading will be used to control robot orientation to face the hoop
         q = transforms3d.euler.euler2quat(0, 0, heading, 'sxyz')
         self.goalPose.pose.orientation.w = q[0]
@@ -514,6 +521,12 @@ class abugameplay(Node):
         self.goalPose.pose.position.y = (self.shootRadius * math.sin(buddy_orientation + 3.141593)) + self.buddyPose.transform.translation.y
         self.draw_shootMarker(self.goalPose.pose.position.x, self.goalPose.pose.position.y)
         
+        # 4.5 limit the position not to collide with the gamefield
+        if self.goalPose.pose.position.y < 0.0:
+            self.goalPose.pose.position.y = 0.0
+        elif self.goalPose.pose.position.y > -6.0:
+            self.goalPose.pose.position.y = -6.0
+        
         # 5. Buddy orientation will be used to control robot orientation to face the buddy
         q = transforms3d.euler.euler2quat(0, 0, buddy_orientation, 'sxyz')
         self.goalPose.pose.orientation.w = q[0]
@@ -538,6 +551,13 @@ class abugameplay(Node):
         self.goalPose.pose.position.x = self.selfPose.transform.translation.x
         self.goalPose.pose.position.y = self.selfPose.transform.translation.y
         self.draw_shootMarker(self.goalPose.pose.position.x, self.goalPose.pose.position.y)
+        
+        # 3.5 limit the position not to collide with the gamefield
+        if self.goalPose.pose.position.y < 0.0:
+            self.goalPose.pose.position.y = 0.0
+        elif self.goalPose.pose.position.y > -6.0:
+            self.goalPose.pose.position.y = -6.0
+        
         # 4. The heading will be pre-process. As the ball receiver was on the back of the robot
         q = transforms3d.euler.euler2quat(0, 0, heading + 3.141593, 'sxyz')
         self.goalPose.pose.orientation.w = q[0]
