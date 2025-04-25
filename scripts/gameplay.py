@@ -423,12 +423,12 @@ class abugameplay(Node):
         self.vel_az = msg.axes[3]                                                       # Angular (spin) velocity
     
     def joyRunner(self):
-        v_vector = (self.vel_heading - self.selfOrientation) if self.fieldOriented is True else self.vel_heading
+        v_vector = (self.vel_heading - self.selfOrientation) if (self.fieldOriented is True) and (self.localizationLostFlag is False) else self.vel_heading
         
         self.cmd_twist.linear.x = self.vel_magnitude * math.cos(v_vector)
         self.cmd_twist.linear.y = self.vel_magnitude * math.sin(v_vector)  
     
-        if self.toggleLockShootGoal is True:
+        if (self.toggleLockShootGoal is True) and (self.localizationLostFlag is False):
             # In the case of shoot goal lock mode, always send cmd_vel
             self.cmd_twist.angular.z = self.calculate_shootOrientation()
             self.manualVelPub_.publish(self.cmd_twist)

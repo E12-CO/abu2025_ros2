@@ -596,12 +596,12 @@ class gameplay_abu2025 : public rclcpp::Node{
 	}
 	
 	void joyRunner(){
-		v_vector = fieldOriented ? (vel_heading - selfOrientation) : vel_heading;
+		v_vector = (fieldOriented & !localizationLostFlag)? (vel_heading - selfOrientation) : vel_heading;
 		
 		cmdTwist.linear.x 	= vel_magnitude * cos(v_vector);
 		cmdTwist.linear.y	= vel_magnitude * sin(v_vector);
 		
-		if(toggleLockShootGoal){
+		if(toggleLockShootGoal & !localizationLostFlag){
 			cmdTwist.angular.z = calculate_shootOrientation();
 			pubManualVel->publish(cmdTwist);
 		}else{
