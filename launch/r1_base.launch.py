@@ -94,13 +94,18 @@ def generate_launch_description():
     # Gameplay System
     gameplay_instant = launch_ros.actions.Node(
         package=pkg_name,
-        executable='gameplay.py',
+        executable='gameplay_cpp',
         namespace='r1',
         output='screen',
         remappings=[('to_buddy', '/r2/from_buddy')],
         parameters=[
             {'self_robot_frame','base_link_r1'},
-            {'buddy_robot_frame','base_link_r2'}
+            {'buddy_robot_frame','base_link_r2'},
+            {'shoot_radius', '4.1'},
+            {'v_xy_max', '1.1'},
+            {'v_az_max', '1.57'},
+            {'hoop_position_x', '13.0'},
+            {'hoop_position_y', '-3.0'}
             ]
     )
     

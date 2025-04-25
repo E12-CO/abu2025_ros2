@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <cstdlib>
 #include <string>
 #include <iostream>
 #include <stdexcept>
@@ -48,8 +49,15 @@ class gameplay_abu2025 : public rclcpp::Node{
 	
 	std::string selfNamespace;
 	
-	// Status flag
+	// Status flags
 	bool selfBallPosession = false;
+	
+	bool cartoStarted = false;
+	
+	bool fieldOriented			= true;
+	bool toggleLockShootGoal	= false;
+	bool autoShootGoal			= false;
+	
 	
 	// tf2 related
 	bool localizationLostFlag = false;
@@ -79,6 +87,10 @@ class gameplay_abu2025 : public rclcpp::Node{
 	rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subBudToSelf;
 	std_msgs::msg::String	fromBuddyMsg; 
 	
+	// Node-red signals
+	rclcpp::Subscription<std_msgs::msg::String>::SharedPtr	subEmer;
+	rclcpp::Subscription<std_msgs::msg::String>::SharedPtr	subSS;
+	
 	// Visualization markers
 	rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr	pubHoopMark;
 	rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr	pubShootMark;
@@ -103,10 +115,6 @@ class gameplay_abu2025 : public rclcpp::Node{
 	// Joy Twist message
 	rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr					pubManualVel;
 	geometry_msgs::msg::Twist										cmdTwist;
-	
-	bool fieldOriented			= true;
-	bool toggleLockShootGoal	= false;
-	bool autoShootGoal			= false;
 	
 	// Parameters
 	double shoot_radius;
@@ -179,7 +187,33 @@ class gameplay_abu2025 : public rclcpp::Node{
 				this,
 				std::placeholders::_1)
 			);
+			
+		// Node-red signals
+		rclcpp::QoS qos_profile(rclcpp::KeepLast(10));
+		qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
 		
+		// Soft Emergency
+		subEmer = 
+			create_subscription<std_msgs::msg::String>(
+			"/soft_emergency",
+			qos_profile,
+			std::bind(
+				&gameplay_abu2025::softEmerCallback,
+				this,
+				std::placeholders::_1)
+			);
+			
+		// Cartographer Start-Stop
+		subSS	=
+			create_subscription<std_msgs::msg::String>(
+			"/start_stop",
+			qos_profile,
+			std::bind(
+				&gameplay_abu2025::ssCallback,
+				this,
+				std::placeholders::_1)
+			);
+			
 		// Visualization
 		pubHoopMark = create_publisher<visualization_msgs::msg::Marker>("hoopmark", 10);
 		pubShootMark = create_publisher<visualization_msgs::msg::Marker>("shootmark", 10);
@@ -380,12 +414,55 @@ class gameplay_abu2025 : public rclcpp::Node{
 	}
 	
 	void softEmerCallback(std_msgs::msg::String::SharedPtr msg){
-		
-		
+		irobSendCmd("stop");
+		RCLCPP_WARN(
+			this->get_logger(),
+			"Got the soft EMERGENCY signal!"
+		);
+	}
+	
+	void carto_startNode(){
+		if(selfNamespace == "/r1")
+			std::system("ros2 launch abu2025_ros2 r1_localize.launch.py &");
+		else if(selfNamespace == "/r2")
+			std::system("ros2 launch abu2025_ros2 r2_localize.launch.py &");
+		else
+			return;
+	}
+	
+	void carto_killNode(){
+		std::system("pkill -f cartographer_node & pkill -f cartographer_occupancy_grid_node");
 	}
 	
 	void ssCallback(std_msgs::msg::String::SharedPtr msg){
-		
+		if(msg->data == "start"){
+			if(cartoStarted == true)
+				return;
+			
+			RCLCPP_INFO(
+				this->get_logger(),
+				"Starting Cartographer ROS"
+			);
+			
+			cartoStarted = true;
+			
+			carto_startNode();
+			
+		}else if(msg->data == "stop"){
+			if(cartoStarted == false)
+				return;
+			
+			RCLCPP_INFO(
+				this->get_logger(),
+				"Stopping Cartographer ROS"
+			);
+			
+			cartoStarted = false;
+			
+			carto_killNode();
+		}else{
+			return;
+		}
 	}
 	
 	void calculate_shootGoal(){
