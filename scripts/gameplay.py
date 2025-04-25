@@ -130,7 +130,7 @@ class abugameplay(Node):
         # Goal pose 
         self.goalPose = PoseStamped()
         
-        self.timer = self.create_timer(0.05, self.timer_callback)
+        self.timer = self.create_timer(0.02, self.timer_callback) # 50Hz wall timer
         # self.serialTimer = self.create_timer(0.05, self.serial_callback)
         self.get_logger().info(f"Robot Club Engineering KMITL : {self.selfNamespace} ABU2025 gameplay system...")
 
@@ -141,7 +141,7 @@ class abugameplay(Node):
 
     # Listen for self transform map --> rX_base_link
     def tf_selfListener(self):
-        if not self.tf_buffer_self.can_transform("map", self.self_robot_frame, rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.1)):
+        if not self.tf_buffer_self.can_transform("map", self.self_robot_frame, rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=0.05)):
             #self.get_logger().warning('Can\'t get self robot transform right now...')
             return 1
             
@@ -150,7 +150,7 @@ class abugameplay(Node):
                  "map",
                  self.self_robot_frame,
                  rclpy.time.Time(),
-                 timeout=rclpy.duration.Duration(seconds=0.1)
+                 timeout=rclpy.duration.Duration(seconds=0.05)
                 )
             
             self.selfOrientation = self.quat_to_yaw(
