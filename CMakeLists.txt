@@ -14,7 +14,15 @@ find_package(xacro REQUIRED)
 # ROS2 dependencies for ROS2 nodes
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
+
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_sensor_msgs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_eigen REQUIRED)
 
 # Robot specific dependencies
 # iRob packages
@@ -34,6 +42,22 @@ set(abu_joy_dependencies
 	rclcpp
 	rclcpp_components
 	sensor_msgs
+)
+
+# set dependencies for gameplay cpp node
+set(gameplay_dependencies
+	rclcpp
+	rclcpp_components
+	tf2
+	tf2_ros 
+	tf2_geometry_msgs 
+	tf2_sensor_msgs 
+	tf2_eigen 
+	std_msgs
+	sensor_msgs
+	geometry_msgs 
+	irob_msgs
+	visualization_msgs	
 )
 
 # Install python scripts
@@ -65,6 +89,24 @@ install(
 	DESTINATION lib/${PROJECT_NAME}
 )
 
+# Gameplay cpp node
+add_executable(gameplay_cpp
+	src/gameplay_cpp/gameplay_cpp.cpp
+)
+
+target_link_libraries(
+	gameplay_cpp
+)
+
+ament_target_dependencies(
+	gameplay_cpp
+	${gameplay_dependencies}
+)
+
+install(
+	TARGETS gameplay_cpp
+	DESTINATION lib/${PROJECT_NAME}
+)
 # Exporting environment hook got the Gazebo sim
 # Following hooks are used to ensure that the correct environment variables
 # will be set by exectuting 'sourece install/setup.bash' after compilation.
