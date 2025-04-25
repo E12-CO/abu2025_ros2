@@ -89,6 +89,7 @@ class abugameplay(Node):
         # iRob maneuv3r stuffs
         self.irobCmdPub_ = self.create_publisher(IrobCmdMsg, 'irob_cmd', 10)
         self.irobStatSub_ = self.create_subscription(IrobCmdMsg, 'irob_stat', self.irobStatCallback, 10)
+        self.irobHaltStatus = False
         
         # Node-red signal subscribers
         # note that the topic name is absolute path with /, indication that it's overriding the namespace.
@@ -105,8 +106,10 @@ class abugameplay(Node):
         self.manualVelPub_ = self.create_publisher(Twist, 'cmd_vel_manual', 10)
         # Sub to abu_joyInterface node
         self.joySub_ = self.create_subscription(Joy, 'joy', self.joyCallback, 10)
-        self.fieldOriented = False
+        
+        self.fieldOriented = True # Default enable
         self.toggleLockShootGoal = False
+        self.autoShootGoal  = False
         
         self.cmd_twist = Twist()
         
@@ -330,6 +333,18 @@ class abugameplay(Node):
     def irobStatCallback(self, msg):
         self.get_logger().info(f'Got iRob message! : {msg.irobcmd}')
     
+        if msg.irobcmd == 'starting':
+            self.irobHaltStatus = False
+    
+        elif msg.irobcmd == 'done':
+            self.irobHaltStatus = True
+        
+        elif msg.irobcmd == 'failed':
+            self.irobHaltStatus = True
+        
+        elif msg.irobcmd == 'canceled':
+            self.irobHaltStatus = True
+        
         return
         
     # Soft emergency response
@@ -380,24 +395,32 @@ class abugameplay(Node):
             
         # Check A1. Active Hoop locking
         if (bool(msg.buttons[6])) is True:
-            if (self.localizationLostFlag is False) and (self.toggleLockShootGoal is False):
+            if (self.localizationLostFlag is False) and (self.toggleLockShootGoal is False) and (self.fieldOriented is True):
                 self.toggleLockShootGoal = True
-                # self.calculate_shootGoal()
-            
-        else:    
-            if self.toggleLockShootGoal is True:
-                self.toggleLockShootGoal = False
-                '''
                 # Set the gameplay FSM to idle
                 self.mainFSM = 'idle'
                 # Stop iRob maneuv3r
                 self.irobSendCmd('stop')
-                '''
-        
-        self.vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2) * self.Vxy_max
-        self.vel_heading = math.atan2(msg.axes[1], msg.axes[0])
-        self.vel_az = msg.axes[3]
-        
+            
+        else:    
+            if self.toggleLockShootGoal is True:
+                self.toggleLockShootGoal = False
+             
+        # Check A2. Automatic park at nearest shoot goal
+        if (bool(msg.buttons[7])) is True:
+            if (self.localizationLostFlag is False) and (self.irobHaltStatus is False):
+                self.calculate_shootGoal()
+                
+            else:
+                self.irobHaltStatus = False # Clear halt flag
+                # Set the gameplay FSM to idle
+                self.mainFSM = 'idle'
+                # Stop iRob maneuv3r
+                self.irobSendCmd('stop')
+            
+        self.vel_magnitude = math.sqrt(msg.axes[0]**2 + msg.axes[1]**2) * self.Vxy_max  # Velocity magnitude
+        self.vel_heading = math.atan2(msg.axes[1], msg.axes[0])                         # Heading angle 
+        self.vel_az = msg.axes[3]                                                       # Angular (spin) velocity
     
     def joyRunner(self):
         v_vector = (self.vel_heading - self.selfOrientation) if self.fieldOriented is True else self.vel_heading
@@ -412,9 +435,19 @@ class abugameplay(Node):
             
         else:
             # In the case of ordinary control mode, send cmd only when sticks were moved.
-            if (abs(self.vel_magnitude) > 0.05) or (abs(msg.axes[3]) > 0.1):
+            if (abs(self.vel_magnitude) > 0.05) or (abs(self.vel_az) > 0.1):
+            
+                # Halt the auto park when user take over control.
+                if self.irobHaltStatus is False:
+                    self.irobHaltStatus = True
+                    # Set the gameplay FSM to idle
+                    self.mainFSM = 'idle'
+                    # Stop iRob maneuv3r
+                    self.irobSendCmd('stop')
+                    
                 self.cmd_twist.angular.z = self.Vz_max * self.vel_az
                 self.manualVelPub_.publish(self.cmd_twist)
+                
             else:
                 return
     
@@ -429,7 +462,7 @@ class abugameplay(Node):
          
         s2h_error = self_to_hoop_angle - self.selfOrientation
     
-        s2h_velAz = (s2h_error * 2.3) + ((s2h_error - self.s2h_prevError) * 0.001)
+        s2h_velAz = (s2h_error * 2.1) + ((s2h_error - self.s2h_prevError) * 0.001)
         
         self.s2h_prevError = s2h_error
         
